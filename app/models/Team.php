@@ -13,6 +13,7 @@ class Team extends App
     protected $name;
     protected $location;
     protected $avatar;
+    protected $competing_for;
     protected $disabled = false;
 
 
@@ -38,6 +39,7 @@ class Team extends App
                 $this->name = $row['name'];
                 $this->location = $row['location'];
                 $this->avatar = $row['avatar'];
+                $this->competing_for = $row['competing_for'];
             }
         }
     }
@@ -83,12 +85,13 @@ class Team extends App
     public function toArray()
     {
         return [
-            'id'       => $this->id,
-            'number'   => $this->number,
-            'name'     => $this->name,
-            'location' => $this->location,
-            'avatar'   => $this->avatar,
-            'disabled' => $this->disabled
+            'id'            => $this->id,
+            'number'        => $this->number,
+            'name'          => $this->name,
+            'location'      => $this->location,
+            'avatar'        => $this->avatar,
+            'competing_for' => $this->competing_for,
+            'disabled'      => $this->disabled
         ];
     }
 
@@ -260,8 +263,8 @@ class Team extends App
             App::returnError('HTTP/1.1 409', 'Insert Error: team [id = ' . $this->id . '] already exists.');
 
         // proceed with insert
-        $stmt = $this->conn->prepare("INSERT INTO $this->table(number, name, location, avatar) VALUES(?, ?, ?, ?)");
-        $stmt->bind_param("isss", $this->number, $this->name, $this->location, $this->avatar);
+        $stmt = $this->conn->prepare("INSERT INTO $this->table(number, name, location, avatar, competing_for) VALUES(?, ?, ?, ?, ?)");
+        $stmt->bind_param("issss", $this->number, $this->name, $this->location, $this->avatar, $this->competing_for);
         $stmt->execute();
         $this->id = $this->conn->insert_id;
     }
@@ -279,8 +282,8 @@ class Team extends App
             App::returnError('HTTP/1.1 404', 'Update Error: team [id = ' . $this->id . '] does not exist.');
 
         // proceed with update
-        $stmt = $this->conn->prepare("UPDATE $this->table SET number = ?, name = ?, location = ?, avatar = ? WHERE id = ?");
-        $stmt->bind_param("isssi", $this->number, $this->name, $this->location, $this->avatar, $this->id);
+        $stmt = $this->conn->prepare("UPDATE $this->table SET number = ?, name = ?, location = ?, avatar = ?, competing_for = ? WHERE id = ?");
+        $stmt->bind_param("issssi", $this->number, $this->name, $this->location, $this->avatar, $this->competing_for, $this->id);
         $stmt->execute();
     }
 
@@ -352,6 +355,18 @@ class Team extends App
 
 
     /***************************************************************************
+     * Set competing_for
+     *
+     * @param string $competing_for
+     * @return void
+     */
+    public function setCompetingFor($competing_for)
+    {
+        $this->competing_for = $competing_for;
+    }
+
+
+    /***************************************************************************
      * Get id
      *
      * @return int
@@ -403,6 +418,16 @@ class Team extends App
     public function getAvatar()
     {
         return $this->avatar;
+    }
+
+    /***************************************************************************
+     * Get competing_for
+     *
+     * @return string
+     */
+    public function getCompetingFor()
+    {
+        return $this->competing_for;
     }
 
 
