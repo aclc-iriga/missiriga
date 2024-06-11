@@ -1,4 +1,4 @@
-# miss-iriga
+# missiriga
 
 Tabulation System for Miss Iriga (Camarines Sur)
 
@@ -14,15 +14,15 @@ Here are the steps to set up the development environment for this project:
 2. Start Apache and MySQL through XAMPP if not already running.
 
 3. Clone or download this repository to your XAMPP **htdocs** folder.
-   The final path should be `path_to/xampp/htdocs/miss-iriga`.
+   The final path should be `path_to/xampp/htdocs/missiriga`.
 
 4. Copy [**`app/config/database.example.php`**](app/config/database.example.php)
    to **`app/config/database.php`**, then modify the database connection settings in the new file.
 
 5. Inside [phpMyAdmin](http://localhost/phpmyadmin),
-   create a MySQL database named `miss-iriga` and import [miss-iriga.sql](miss-iriga.sql) into it.
+   create a MySQL database named `missiriga` and import [missiriga.sql](missiriga.sql) into it.
 
-6. Open the terminal and navigate to the project directory **miss-iriga**.
+6. Open the terminal and navigate to the project directory **missiriga**.
 
 7. Execute the following commands to install the required dependencies:
    ```sh
@@ -34,7 +34,7 @@ Here are the steps to set up the development environment for this project:
    npm run dev
    ```
 
-9. Open your web browser and access <http://localhost:5199/miss-iriga/> to view the application.
+9. Open your web browser and access <http://localhost:5199/missiriga/> to view the application.
 
 
 ---
@@ -49,7 +49,7 @@ Before getting started, ensure that you have [**Composer**](https://getcomposer.
    to **`tests/backend/config/test-database.php`**, then modify the database connection settings in the new file.
 
 2. Inside [phpMyAdmin](http://localhost/phpmyadmin),
-   create a MySQL database named `test-miss-iriga` and import [miss-iriga.sql](miss-iriga.sql) into it.
+   create a MySQL database named `test-missiriga` and import [missiriga.sql](missiriga.sql) into it.
 
 3. Run the following command to install the required dependencies.
    ```shell
@@ -92,15 +92,15 @@ Here's how to compile the project for production deployment:
    npm run build
    ```
 
-2. Access the application by visiting `http://[host_name]/miss-iriga`,
+2. Access the application by visiting `http://[host_name]/missiriga`,
    where `host_name` is the **IP address** or **host name** of the server in the network.
    For example:
-     - <http://localhost/miss-iriga>
-     - <http://192.168.1.99/miss-iriga>
+     - <http://localhost/missiriga>
+     - <http://192.168.1.99/missiriga>
 
 
 #### Admin Dashboard
-Access the **admin dashboard** at <http://localhost/miss-iriga/app>.
+Access the **admin dashboard** at <http://localhost/missiriga/app>.
 The default ***username*** and ***password*** is `admin`.
 
 #### Printing Results

@@ -12,7 +12,7 @@ export default createStore({
 
     state: {
         app: {
-            title: 'Miss Iriga 2023',
+            title: 'Miss Iriga 2024',
             org: 'ACLC College Iriga',
             backendDir: 'app',
             sideNav: false

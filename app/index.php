@@ -59,7 +59,7 @@ else if(isset($_POST['signOut'])) {
 
 
 $routes = [
-    [ "name" => "Tabulation"      , "route" => "/miss-iriga"            ],
+    [ "name" => "Tabulation"      , "route" => "/missiriga"            ],
     [ "name" => "CRUD"            , "route" => "crud/competitions.php" ],
     [ "name" => "User Assignments", "route" => "crud/assignment"       ],
     [ "name" => "Eliminations"    , "route" => "crud/eliminations"     ],
@@ -95,7 +95,7 @@ $routes = [
         }
 
     </style>
-    <title>miss-iriga</title>
+    <title>missiriga</title>
 </head>
 <body>
 
@@ -111,7 +111,7 @@ $routes = [
                     </defs>
                     <path fill="url(#grad1)" d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16Zm0-1c-1.657 0-3-1-3-2.75 0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5-.179 1-.25 2 1 3 .625.5 1 1.364 1 2.25C11 14 9.657 15 8 15Z"/>
                 </svg>
-                <h1 class="fw-bold" >miss-iriga</h1>
+                <h1 class="fw-bold" >missiriga</h1>
                 <p class="fst-italic" >Miss Iriga (Camarines Sur)</p>
             </div>
 

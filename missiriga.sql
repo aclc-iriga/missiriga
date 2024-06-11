@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `miss-iriga`
+-- Database: `missiriga`
 --
 
 -- --------------------------------------------------------
@@ -104,7 +104,7 @@ CREATE TABLE `competitions` (
 --
 
 INSERT INTO `competitions` (`id`, `slug`, `title`, `created_at`, `updated_at`) VALUES
-(1, 'miss-iriga-2024', 'Miss Iriga 2024', '2023-04-06 13:24:04', '2024-06-10 21:23:20');
+(1, 'missiriga-2024', 'Miss Iriga 2024', '2023-04-06 13:24:04', '2024-06-10 21:23:20');
 
 -- --------------------------------------------------------
 
