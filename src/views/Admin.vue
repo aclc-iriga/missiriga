@@ -154,6 +154,7 @@
                         <td :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }">
                             <p class="ma-0 text-subtitle-2 text-uppercase font-weight-bold" style="line-height: 1.2">{{ team.name }}</p>
                             <p class="mt-1 mb-0" style="line-height: 1"><small>{{ team.location }}</small></p>
+                            <p class="mt-1 mb-0 opacity-50" style="line-height: 1; font-size: 13px"><small>for <b>{{ team.competing_for }}</b></small></p>
                         </td>
                         <td
                             v-for="(technical, technicalKey, technicalIndex) in technicals"
@@ -245,7 +246,7 @@
                             <v-row class="justify-center">
                                 <v-col
                                     v-for="technical in technicals" :key="technical.id"
-                                    :md="signatoryColumnWidth"
+                                    :style="{ 'flex': `0 0 ${(signatoryColumnWidth / 12) * 100}%`, 'max-width': `${(signatoryColumnWidth / 12) * 100}%` }"
                                 >
                                     <v-card class="text-center mb-5" :class="{ 'text-warning': technical.calling }" flat>
                                         <v-card-title class="pt-16 pb-1 font-weight-bold">
@@ -269,7 +270,7 @@
 
                                 <v-col
                                     v-for="judge in judges" :key="judge.id"
-                                    :md="signatoryColumnWidth"
+                                    :style="{ 'flex': `0 0 ${(signatoryColumnWidth / 12) * 100}%`, 'max-width': `${(signatoryColumnWidth / 12) * 100}%` }"
                                 >
                                     <v-card class="text-center mb-5" :class="{ 'text-warning': judge.calling }" flat>
                                         <v-card-title class="pt-16 pb-1 font-weight-bold">

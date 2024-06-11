@@ -12,7 +12,7 @@ export default createStore({
 
     state: {
         app: {
-            title: 'Binibining San Vicente 2023',
+            title: 'Miss Iriga 2024',
             org: 'ACLC College Iriga',
             backendDir: 'app',
             sideNav: false
@@ -21,7 +21,7 @@ export default createStore({
             height: 0
         },
         rating: {
-            min: 70,
+            min: 80,
             max: 100
         },
         deduction: {
@@ -39,7 +39,7 @@ export default createStore({
         // get app url
         appURL(state) {
             const location = window.location;
-            if(location.hostname === 'localhost' && location.port === '5178')
+            if(location.hostname === 'localhost' && location.port === '5199')
                 return `http://localhost${import.meta.env.BASE_URL}${state.app.backendDir}`;
             else
                 return `${location.protocol}//${location.hostname}${import.meta.env.BASE_URL}${state.app.backendDir}`;

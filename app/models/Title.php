@@ -301,7 +301,7 @@ class Title extends App
     /***************************************************************************
      * Get title
      *
-     * @return float
+     * @return string
      */
     public function getTitle()
     {
