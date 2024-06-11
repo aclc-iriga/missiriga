@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 10, 2024 at 11:51 PM
+-- Generation Time: Jun 11, 2024 at 10:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -83,7 +83,8 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `competition_id`, `slug`, `title`, `created_at`, `updated_at`) VALUES
-(1, 1, 'pageant-night', 'Pageant Night', '2023-04-06 13:25:10', '2023-04-06 13:25:10');
+(1, 1, 'pageant-night', 'Pageant Night', '2023-04-06 13:25:10', '2023-04-06 13:25:10'),
+(2, 1, 'pre-pageant', 'Pre-Pageant', '2024-06-11 07:29:26', '2024-06-11 07:29:26');
 
 -- --------------------------------------------------------
 
@@ -126,9 +127,21 @@ CREATE TABLE `criteria` (
 --
 
 INSERT INTO `criteria` (`id`, `event_id`, `title`, `percentage`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Beauty ', 40, '2024-06-10 21:37:30', '2024-06-10 21:37:30'),
-(2, 1, 'Intelligence', 40, '2024-06-10 21:37:42', '2024-06-10 21:37:42'),
-(3, 1, 'Over-all Impression', 20, '2024-06-10 21:37:57', '2024-06-10 21:37:57');
+(1, 3, 'Beauty ', 40, '2024-06-10 21:37:30', '2024-06-10 21:37:30'),
+(2, 3, 'Intelligence', 40, '2024-06-10 21:37:42', '2024-06-10 21:37:42'),
+(3, 3, 'Over-all Impression', 20, '2024-06-10 21:37:57', '2024-06-10 21:37:57'),
+(4, 1, 'Form and Figure', 40, '2024-06-11 07:26:14', '2024-06-11 07:26:14'),
+(5, 1, 'Poise and Projection', 40, '2024-06-11 07:26:26', '2024-06-11 07:26:26'),
+(6, 1, 'Confidence', 20, '2024-06-11 07:26:37', '2024-06-11 07:26:37'),
+(7, 2, 'Elegance', 40, '2024-06-11 07:26:57', '2024-06-11 07:26:57'),
+(8, 2, 'Poise and Projection', 40, '2024-06-11 07:27:12', '2024-06-11 07:27:12'),
+(9, 2, 'Over-all Impact', 20, '2024-06-11 07:27:21', '2024-06-11 07:27:21'),
+(10, 4, 'Form and Figure', 40, '2024-06-11 07:31:57', '2024-06-11 07:31:57'),
+(11, 4, 'Poise and Projection', 40, '2024-06-11 07:32:08', '2024-06-11 07:32:08'),
+(12, 4, 'Confidence', 20, '2024-06-11 07:32:16', '2024-06-11 07:32:16'),
+(13, 5, 'Elegance', 40, '2024-06-11 07:32:29', '2024-06-11 07:32:29'),
+(14, 5, 'Poise and Projection', 40, '2024-06-11 07:32:39', '2024-06-11 07:32:39'),
+(15, 5, 'Over-all Impact', 20, '2024-06-11 07:32:47', '2024-06-11 07:32:47');
 
 -- --------------------------------------------------------
 
@@ -181,7 +194,11 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `category_id`, `slug`, `title`, `created_at`, `updated_at`) VALUES
-(1, 1, 'final-qa', 'Final Q&A', '2024-06-10 21:33:57', '2024-06-10 21:37:07');
+(1, 1, 'swimsuit', 'Swimsuit (Pageant Night)', '2024-06-11 07:24:01', '2024-06-11 07:28:35'),
+(2, 1, 'evening-gown', 'Evening Gown (Pageant Night)', '2024-06-11 07:24:13', '2024-06-11 07:28:36'),
+(3, 1, 'final-qa', 'Final Q&A', '2024-06-10 21:33:57', '2024-06-11 07:28:38'),
+(4, 2, 'pre-swimsuit', 'Swimsuit (Pre-Pageant)', '2024-06-11 07:30:40', '2024-06-11 07:31:15'),
+(5, 2, 'pre-evening-gown', 'Evening Gown (Pre-Pageant)', '2024-06-11 07:30:58', '2024-06-11 07:31:21');
 
 -- --------------------------------------------------------
 
@@ -208,13 +225,14 @@ CREATE TABLE `judges` (
 --
 
 INSERT INTO `judges` (`id`, `number`, `name`, `avatar`, `username`, `password`, `active_portion`, `called_at`, `pinged_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Judge 01', 'no-avatar.jpg', 'judge01', 'judge01', NULL, NULL, NULL, '2023-04-06 13:58:11', '2023-04-06 13:58:11'),
+(1, 1, 'Judge 01', 'no-avatar.jpg', 'judge01', 'judge01', NULL, NULL, NULL, '2023-04-06 13:58:11', '2024-06-11 08:11:27'),
 (2, 2, 'Judge 02', 'no-avatar.jpg', 'judge02', 'judge02', NULL, NULL, NULL, '2023-04-06 13:58:28', '2023-04-06 13:58:28'),
 (3, 3, 'Judge 03', 'no-avatar.jpg', 'judge03', 'judge03', NULL, NULL, NULL, '2023-04-06 13:58:42', '2023-04-06 13:58:42'),
 (4, 4, 'Judge 04', 'no-avatar.jpg', 'judge04', 'judge04', NULL, NULL, NULL, '2023-04-06 13:59:26', '2023-04-06 13:59:26'),
 (5, 5, 'Judge 05', 'no-avatar.jpg', 'judge05', 'judge05', NULL, NULL, NULL, '2023-04-06 14:00:00', '2023-04-06 14:00:00'),
 (6, 7, 'Judge 06', 'no-avatar.jpg', 'judge06', 'judge06', NULL, NULL, NULL, '2024-06-10 21:38:33', '2024-06-10 21:38:33'),
-(7, 7, 'Judge 07', 'no-avatar.jpg', 'judge07', 'judge07', NULL, NULL, NULL, '2024-06-10 21:38:50', '2024-06-10 21:38:50');
+(7, 7, 'Judge 07', 'no-avatar.jpg', 'judge07', 'judge07', NULL, NULL, NULL, '2024-06-10 21:38:50', '2024-06-10 21:38:50'),
+(8, 1, 'Pre-Pageant Total', 'no-avatar.jpg', 'prejudge01', 'prejudge01', NULL, NULL, NULL, '2024-06-11 07:36:29', '2024-06-11 08:11:32');
 
 -- --------------------------------------------------------
 
@@ -238,13 +256,29 @@ CREATE TABLE `judge_event` (
 --
 
 INSERT INTO `judge_event` (`id`, `judge_id`, `event_id`, `is_chairman`, `active_team_id`, `has_active_team`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 0, 1, 0, '2024-06-10 21:39:11', '2024-06-10 21:50:51'),
-(2, 2, 1, 0, 1, 0, '2024-06-10 21:39:17', '2024-06-10 21:50:53'),
-(3, 3, 1, 0, 1, 0, '2024-06-10 21:39:22', '2024-06-10 21:50:54'),
-(4, 4, 1, 0, 1, 0, '2024-06-10 21:39:28', '2024-06-10 21:50:56'),
-(5, 5, 1, 0, 1, 0, '2024-06-10 21:39:36', '2024-06-10 21:50:58'),
-(6, 6, 1, 0, 1, 0, '2024-06-10 21:39:41', '2024-06-10 21:51:00'),
-(7, 7, 1, 0, 1, 0, '2024-06-10 21:39:47', '2024-06-10 21:51:04');
+(1, 1, 3, 0, 1, 0, '2024-06-10 21:39:11', '2024-06-10 21:50:51'),
+(2, 2, 3, 0, 1, 0, '2024-06-10 21:39:17', '2024-06-10 21:50:53'),
+(3, 3, 3, 0, 1, 0, '2024-06-10 21:39:22', '2024-06-10 21:50:54'),
+(4, 4, 3, 0, 1, 0, '2024-06-10 21:39:28', '2024-06-10 21:50:56'),
+(5, 5, 3, 0, 1, 0, '2024-06-10 21:39:36', '2024-06-10 21:50:58'),
+(6, 6, 3, 0, 1, 0, '2024-06-10 21:39:41', '2024-06-10 21:51:00'),
+(7, 7, 3, 0, 1, 0, '2024-06-10 21:39:47', '2024-06-10 21:51:04'),
+(8, 1, 1, 0, 1, 0, '2024-06-11 07:33:33', '2024-06-11 07:33:33'),
+(9, 1, 2, 0, 1, 0, '2024-06-11 07:34:03', '2024-06-11 07:34:03'),
+(10, 2, 1, 0, 1, 0, '2024-06-11 07:34:10', '2024-06-11 07:34:10'),
+(11, 2, 2, 0, 1, 0, '2024-06-11 07:34:14', '2024-06-11 07:34:14'),
+(12, 3, 1, 0, 1, 0, '2024-06-11 07:34:22', '2024-06-11 07:34:22'),
+(13, 3, 2, 0, 1, 0, '2024-06-11 07:34:25', '2024-06-11 07:34:25'),
+(14, 4, 1, 0, 1, 0, '2024-06-11 07:34:33', '2024-06-11 07:34:33'),
+(15, 4, 2, 0, 1, 0, '2024-06-11 07:34:36', '2024-06-11 07:34:36'),
+(16, 5, 1, 0, 1, 0, '2024-06-11 07:34:43', '2024-06-11 07:34:43'),
+(17, 5, 2, 0, 1, 0, '2024-06-11 07:34:46', '2024-06-11 07:34:46'),
+(18, 6, 1, 0, 1, 0, '2024-06-11 07:34:52', '2024-06-11 07:34:52'),
+(19, 6, 2, 0, 1, 0, '2024-06-11 07:34:56', '2024-06-11 07:34:56'),
+(20, 7, 1, 0, 1, 0, '2024-06-11 07:35:16', '2024-06-11 07:35:16'),
+(21, 7, 2, 0, 1, 0, '2024-06-11 07:35:20', '2024-06-11 07:35:20'),
+(22, 8, 4, 0, 1, 0, '2024-06-11 07:36:43', '2024-06-11 07:36:43'),
+(23, 8, 5, 0, 1, 0, '2024-06-11 07:36:48', '2024-06-11 07:36:48');
 
 -- --------------------------------------------------------
 
@@ -411,6 +445,17 @@ CREATE TABLE `titles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `titles`
+--
+
+INSERT INTO `titles` (`id`, `event_id`, `rank`, `title`, `created_at`, `updated_at`) VALUES
+(1, 3, 1, 'MISS IRIGA 2024', '2024-06-11 07:43:42', '2024-06-11 08:09:12'),
+(2, 3, 2, 'MISS RINCONADA 2024', '2024-06-11 07:43:42', '2024-06-11 08:09:14'),
+(3, 3, 3, 'MISS BICOL TOURISM 2024', '2024-06-11 07:43:42', '2024-06-11 08:09:16'),
+(4, 3, 4, '1ST RUNNER UP', '2024-06-11 07:43:42', '2024-06-11 08:09:17'),
+(5, 3, 5, '2ND RUNNER UP', '2024-06-11 07:43:42', '2024-06-11 08:09:19');
+
+--
 -- Indexes for dumped tables
 --
 
@@ -567,7 +612,7 @@ ALTER TABLE `arrangements`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `competitions`
@@ -579,7 +624,7 @@ ALTER TABLE `competitions`
 -- AUTO_INCREMENT for table `criteria`
 --
 ALTER TABLE `criteria`
-  MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `deductions`
@@ -597,19 +642,19 @@ ALTER TABLE `eliminations`
 -- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `judges`
 --
 ALTER TABLE `judges`
-  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `judge_event`
 --
 ALTER TABLE `judge_event`
-  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `noshows`
@@ -657,7 +702,7 @@ ALTER TABLE `technical_event`
 -- AUTO_INCREMENT for table `titles`
 --
 ALTER TABLE `titles`
-  MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
