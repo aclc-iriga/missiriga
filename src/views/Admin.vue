@@ -154,6 +154,7 @@
                         <td :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }">
                             <p class="ma-0 text-subtitle-2 text-uppercase font-weight-bold" style="line-height: 1.2">{{ team.name }}</p>
                             <p class="mt-1 mb-0" style="line-height: 1"><small>{{ team.location }}</small></p>
+                            <p class="mt-1 mb-0 opacity-50" style="line-height: 1; font-size: 13px"><small>for <b>{{ team.competing_for }}</b></small></p>
                         </td>
                         <td
                             v-for="(technical, technicalKey, technicalIndex) in technicals"
