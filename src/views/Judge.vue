@@ -3,266 +3,303 @@
 
     <side-nav/>
 
-	<!--	Judge Score Sheet	-->
-	<v-main v-if="$store.getters['auth/getUser'] !== null">
-		<v-table
-			v-if="$route.params.eventSlug && event"
-			density="comfortable"
-			fixed-header
-			:height="scoreSheetHeight"
-		>
-			<thead>
-				<tr>
-					<th
-                        colspan="3"
-                        class="text-uppercase text-center font-weight-bold text-grey-darken-4 py-3"
-                        :class="$vuetify.display.mdAndDown ? 'text-h5' : 'text-h4'"
-                    >
-						{{ event.title }}
-					</th>
-					<th
-						v-for="(criterion, criterionIndex) in criteria"
-						style="width: 13%"
-						class="text-center text-uppercase py-3"
-						:class="{ 'bg-grey-lighten-4': coordinates.x == criterionIndex && !scoreSheetDisabled }"
-					>
-						<div class="d-flex h-100 flex-column align-content-space-between">
-                            <p
-                                class="text-grey-darken-1"
-                                :class="{
-                                    'text-caption text-uppercase': $vuetify.display.mdAndDown,
-                                    'text-grey-darken-3': coordinates.x == criterionIndex && !scoreSheetDisabled
-                                }"
-                            >
-                                {{ criterion.title }}
-                            </p>
-                            <b
-                                class="text-grey-darken-2 text-h6 pt-1"
-                                :class="{
-                                    'text-body-2 text-uppercase font-weight-bold': $vuetify.display.mdAndDown,
-                                    'text-grey-darken-4': coordinates.x == criterionIndex && !scoreSheetDisabled
-                                }"
-                                style="margin-top: auto"
-                            >
-                                {{ criterion.percentage }}%
-                            </b>
-						</div>
-					</th>
-					<th
-						style="width: 13%"
-						class="text-uppercase text-center text-grey-darken-3 font-weight-bold py-3"
-						:class="{ 'bg-grey-lighten-4': coordinates.x == criteria.length && !scoreSheetDisabled }, $vuetify.display.mdAndDown ? 'text-body-1' : 'text-h6'"
-					>
-						Total
-                        <p class="ma-0 text-subtitle-2 text-green-darken-2">{{ minRating.toFixed(2) }} - {{ (maxRating >= 100) ? maxRating.toFixed(0) : maxRating.toFixed(2) }}</p>
-					</th>
-					<th
-						style="width: 13%"
-						class="text-uppercase text-center text-grey-darken-3 font-weight-bold py-3"
-                        :class="$vuetify.display.mdAndDown ? 'text-body-1' : 'text-h6'"
-					>
-						Rank
-                        <p class="ma-0 text-subtitle-2">&nbsp;</p>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr
-					v-for="(team, teamIndex) in teams"
-					:key="team.id"
-                    :id="`row--team-${team.id}`"
-					:class="{ 'bg-grey-lighten-4': coordinates.y == teamIndex && !scoreSheetDisabled }"
-				>
-                    <td
-                        class="text-uppercase text-right text-h5 font-weight-bold text-grey-darken-2"
-                        :class="{ 'text-grey-darken-4': coordinates.y == teamIndex && !scoreSheetDisabled }"
-                    >
-                        {{ team.number }}
-                    </td>
-					<td style="width: 72px;">
-                        <v-avatar size="72">
-                            <v-img
-                                cover
-                                :src="`${$store.getters.appURL}/crud/uploads/${team.avatar}`"
-                            />
-                        </v-avatar>
-					</td>
-                    <td
-                        class="px-0 text-grey-darken-2"
-                        :class="{ 'text-grey-darken-4': coordinates.y == teamIndex && !scoreSheetDisabled }"
-                    >
-                        <p class="ma-0 text-subtitle-2 text-uppercase font-weight-bold" style="line-height: 1.2">{{ team.name }}</p>
-                        <p class="mt-1 mb-0" style="line-height: 1"><small>{{ team.location }}</small></p>
-                      <p class="mt-1 mb-0 opacity-50" style="line-height: 1; font-size: 13px"><small>for <b>{{ team.competing_for }}</b></small></p>
-
-                    </td>
-					<td
-						v-for="(criterion, criterionIndex) in criteria"
-						:key="criterion.id"
-						:class="{ 'bg-grey-lighten-4': coordinates.x == criterionIndex && !scoreSheetDisabled }"
-					>
-						<v-text-field
-							type="number"
-							class="font-weight-bold"
-							hide-details
-							single-line
-							:min="0"
-							:max="criterion.percentage"
-							@change="saveRating(ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`], criterion.percentage, team)"
-							v-model.number="ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value"
-							:class="{
-								'text-error font-weight-bold': (
-									ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value < 0 ||
-									ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value > criterion.percentage
-								),
-								'text-grey-darken-1': ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value === 0,
-								'text-grey-darken-3': (
-                                    ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value > 0 &&
-                                    ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value <= criterion.percentage
-                                )
-							}"
-							:error="(
-								  ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value.toString().trim() === ''
-							   || ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value < 0
-							   || ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value > criterion.percentage
-							)"
-                            :variant="
-                                ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value < 0
-                                ||
-                                ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value > criterion.percentage
-                                ? 'outlined' : 'underlined'
-							"
-							:disabled="team.disabled || ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].is_locked"
-							:id="`input_${teamIndex}_${criterionIndex}`"
-                            @keyup.prevent="handleRatingKeyUp(team)"
-                            @keydown.down.prevent="moveDown(criterionIndex, teamIndex)"
-							@keydown.enter="moveDown(criterionIndex, teamIndex)"
-							@keydown.up.prevent="moveUp(criterionIndex, teamIndex)"
-							@keydown.right.prevent="moveRight(criterionIndex, teamIndex)"
-							@keydown.left.prevent="moveLeft(criterionIndex, teamIndex)"
-							@focus.passive="updateCoordinates(criterionIndex, teamIndex)"
-						/>
-					</td>
-					<td :class="{ 'bg-grey-lighten-4': coordinates.x == criteria.length && !scoreSheetDisabled }">
-						<v-text-field
-							type="number"
-							class="font-weight-bold"
-                            variant="outlined"
-                            hide-details
-							:loading="totals[`team_${team.id}`].loading"
-							v-model.number="totals[`team_${team.id}`].value"
-							:min="minRating"
-							:max="maxRating"
-							@change="calculateTotalScores(team)"
-                            :ref="`txt-total-${team.id}`"
-							:class="{
-                                'text-error font-weight-bold'  : totalErrors[`team_${team.id}`].invalid,
-                                'text-success font-weight-bold': !totalErrors[`team_${team.id}`].invalid,
-                                'v-input-total-error': !totalErrors[`team_${team.id}`].empty && totalErrors[`team_${team.id}`].invalid
-							}"
-                            :error="totalErrors[`team_${team.id}`].empty || totalErrors[`team_${team.id}`].invalid"
-                            :label="(
-                                (!totalErrors[`team_${team.id}`].empty && totalErrors[`team_${team.id}`].invalid)
-                                ? `${minRating} - ${maxRating}` : ''
-                            )"
-							:disabled="team.disabled || totals[`team_${team.id}`].is_locked"
-							:id="`input_${teamIndex}_${criteria.length}`"
-							@keydown.down.prevent="moveDown(criteria.length, teamIndex)"
-							@keydown.enter="moveDown(criteria.length, teamIndex)"
-							@keydown.up.prevent="moveUp(criteria.length, teamIndex)"
-							@keydown.right.prevent="moveRight(criteria.length, teamIndex)"
-							@keydown.left.prevent="moveLeft(criteria.length, teamIndex)"
-							@focus.passive="updateCoordinates(criteria.length, teamIndex)"
-						/>
-					</td>
-                    <td
-                        class="text-center font-weight-bold"
-                        :class="{
-                            'text-grey-darken-2': coordinates.y != teamIndex && !scoreSheetDisabled,
-                            'text-grey-darken-4': coordinates.y == teamIndex && !scoreSheetDisabled,
-                            'text-grey-darken-1': scoreSheetDisabled,
-                        }"
-                    >
-                        <span :style="{'opacity': team.disabled ? 0.6 : 1}">{{ ranks[`team_${team.id}`] }}</span>
-                    </td>
-				</tr>
-			</tbody>
-			<!--	Dialog	  -->
-			<tfoot>
-                <tr>
-                    <td colspan="12">
-                        <v-col align="center"
-                               justify="end"
+    <!-- Judge Score Sheet -->
+    <v-main style="height: 100vh; overflow: auto;">
+        <div v-if="$store.getters['auth/getUser'] !== null">
+            <v-table
+                v-if="$route.params.eventSlug && event"
+                density="comfortable"
+                fixed-header
+                :height="scoreSheetHeight"
+                class="main-table"
+            >
+                <thead>
+                    <tr>
+                        <th
+                            colspan="3"
+                            class="text-uppercase text-center font-weight-bold text-grey-darken-4 py-3"
+                            :class="$vuetify.display.mdAndDown ? 'text-h5' : 'text-h4'"
                         >
+                            {{ event.title }}
+                        </th>
+                        <th
+                            v-for="(criterion, criterionIndex) in criteria"
+                            style="width: 13%"
+                            class="text-center text-uppercase py-3"
+                            :class="{ 'bg-grey-lighten-4': coordinates.x == criterionIndex && !scoreSheetDisabled }"
+                        >
+                            <div class="d-flex h-100 flex-column align-content-space-between">
+                                <p
+                                    class="text-grey-darken-1"
+                                    :class="{
+                                            'text-caption text-uppercase': $vuetify.display.mdAndDown,
+                                            'text-grey-darken-3': coordinates.x == criterionIndex && !scoreSheetDisabled
+                                        }"
+                                >
+                                    {{ criterion.title }}
+                                </p>
+                                <b
+                                    class="text-grey-darken-2 text-h6 pt-1"
+                                    :class="{
+                                            'text-body-2 text-uppercase font-weight-bold': $vuetify.display.mdAndDown,
+                                            'text-grey-darken-4': coordinates.x == criterionIndex && !scoreSheetDisabled
+                                        }"
+                                    style="margin-top: auto"
+                                >
+                                    {{ criterion.percentage }}%
+                                </b>
+                            </div>
+                        </th>
+                        <th
+                            style="width: 13%"
+                            class="text-uppercase text-center text-grey-darken-3 font-weight-bold py-3"
+                            :class="{ 'bg-grey-lighten-4': coordinates.x == criteria.length && !scoreSheetDisabled }, $vuetify.display.mdAndDown ? 'text-body-1' : 'text-h6'"
+                        >
+                            Total
+                            <p class="ma-0 text-subtitle-2 text-green-darken-2">{{ minRating.toFixed(2) }} - {{ (maxRating >= 100) ? maxRating.toFixed(0) : maxRating.toFixed(2) }}</p>
+                        </th>
+                        <th
+                            style="width: 13%"
+                            class="text-uppercase text-center text-grey-darken-3 font-weight-bold py-3"
+                            :class="$vuetify.display.mdAndDown ? 'text-body-1' : 'text-h6'"
+                        >
+                            Rank
+                            <p class="ma-0 text-subtitle-2"> </p>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="(team, teamIndex) in teams"
+                        :key="team.id"
+                        :id="`row--team-${team.id}`"
+                        :class="{ 'bg-grey-lighten-4': coordinates.y == teamIndex && !scoreSheetDisabled }"
+                    >
+                        <td
+                            class="text-uppercase text-right text-h5 font-weight-bold text-grey-darken-2"
+                            :class="{ 'text-grey-darken-4': coordinates.y == teamIndex && !scoreSheetDisabled }"
+                        >
+                            {{ team.number }}
+                        </td>
+                        <td style="width: 72px;">
+                            <v-avatar size="72">
+                                <v-img
+                                    cover
+                                    :src="`${$store.getters.appURL}/crud/uploads/${team.avatar}`"
+                                />
+                            </v-avatar>
+                        </td>
+                        <td
+                            class="px-0 text-grey-darken-2"
+                            :class="{ 'text-grey-darken-4': coordinates.y == teamIndex && !scoreSheetDisabled }"
+                        >
+                            <p class="ma-0 text-subtitle-2 text-uppercase font-weight-bold" style="line-height: 1.2">{{ team.name }}</p>
+                            <p class="mt-1 mb-0" style="line-height: 1"><small>{{ team.location }}</small></p>
+                            <p class="mt-1 mb-0 opacity-50" style="line-height: 1; font-size: 13px"><small>for <b>{{ team.competing_for }}</b></small></p>
+                        </td>
+                        <td
+                            v-for="(criterion, criterionIndex) in criteria"
+                            :key="criterion.id"
+                            :class="{ 'bg-grey-lighten-4': coordinates.x == criterionIndex && !scoreSheetDisabled }"
+                        >
+                            <v-text-field
+                                type="number"
+                                class="font-weight-bold"
+                                hide-details
+                                single-line
+                                :min="0"
+                                :max="criterion.percentage"
+                                @change="saveRating(ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`], criterion.percentage, team)"
+                                v-model.number="ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value"
+                                :class="{
+                                        'text-error font-weight-bold': (
+                                            ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value < 0 ||
+                                            ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value > criterion.percentage
+                                        ),
+                                        'text-grey-darken-1': ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value === 0,
+                                        'text-grey-darken-3': (
+                                            ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value > 0 &&
+                                            ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value <= criterion.percentage
+                                        )
+                                    }"
+                                :error="(
+                                        ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value.toString().trim() === '' ||
+                                        ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value < 0 ||
+                                        ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value > criterion.percentage
+                                    )"
+                                :variant="
+                                        ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value < 0 ||
+                                        ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value > criterion.percentage
+                                        ? 'outlined' : 'underlined'
+                                    "
+                                :disabled="team.disabled || ratings[`${event.slug}_${team.id}`][`${$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].is_locked"
+                                :id="`input_${teamIndex}_${criterionIndex}`"
+                                @keyup.prevent="handleRatingKeyUp(team)"
+                                @keydown.down.prevent="moveDown(criterionIndex, teamIndex)"
+                                @keydown.enter="moveDown(criterionIndex, teamIndex)"
+                                @keydown.up.prevent="moveUp(criterionIndex, teamIndex)"
+                                @keydown.right.prevent="moveRight(criterionIndex, teamIndex)"
+                                @keydown.left.prevent="moveLeft(criterionIndex, teamIndex)"
+                                @focus.passive="updateCoordinates(criterionIndex, teamIndex)"
+                            />
+                        </td>
+                        <td :class="{ 'bg-grey-lighten-4': coordinates.x == criteria.length && !scoreSheetDisabled }">
+                            <v-text-field
+                                type="number"
+                                class="font-weight-bold"
+                                variant="outlined"
+                                hide-details
+                                :loading="totals[`team_${team.id}`].loading"
+                                v-model.number="totals[`team_${team.id}`].value"
+                                :min="minRating"
+                                :max="maxRating"
+                                @change="calculateTotalScores(team)"
+                                :ref="`txt-total-${team.id}`"
+                                :class="{
+                                        'text-error font-weight-bold'  : totalErrors[`team_${team.id}`].invalid,
+                                        'text-success font-weight-bold': !totalErrors[`team_${team.id}`].invalid,
+                                        'v-input-total-error': !totalErrors[`team_${team.id}`].empty && totalErrors[`team_${team.id}`].invalid
+                                    }"
+                                :error="totalErrors[`team_${team.id}`].empty || totalErrors[`team_${team.id}`].invalid"
+                                :label="(
+                                        (!totalErrors[`team_${team.id}`].empty && totalErrors[`team_${team.id}`].invalid)
+                                        ? `${minRating} - ${maxRating}` : ''
+                                    )"
+                                :disabled="team.disabled || totals[`team_${team.id}`].is_locked"
+                                :id="`input_${teamIndex}_${criteria.length}`"
+                                @keydown.down.prevent="moveDown(criteria.length, teamIndex)"
+                                @keydown.enter="moveDown(criteria.length, teamIndex)"
+                                @keydown.up.prevent="moveUp(criteria.length, teamIndex)"
+                                @keydown.right.prevent="moveRight(criteria.length, teamIndex)"
+                                @keydown.left.prevent="moveLeft(criteria.length, teamIndex)"
+                                @focus.passive="updateCoordinates(criteria.length, teamIndex)"
+                            />
+                        </td>
+                        <td
+                            class="text-center font-weight-bold"
+                            :class="{
+                                    'text-grey-darken-2': coordinates.y != teamIndex && !scoreSheetDisabled,
+                                    'text-grey-darken-4': coordinates.y == teamIndex && !scoreSheetDisabled,
+                                    'text-grey-darken-1': scoreSheetDisabled,
+                                }"
+                        >
+                            <span :style="{'opacity': team.disabled ? 0.6 : 1}">{{ ranks[`team_${team.id}`] }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </v-table>
+			<!--	Dialog	  -->
+            <v-col align="center" justify="end" class="mt-4">
+                <v-btn
+                    class="py-7 bg-grey-lighten-1 text-grey-darken-3"
+                    @click="openSubmitDialog"
+                    :disabled="scoreSheetDisabled"
+                    block
+                    flat
+                >
+                    <p style="font-size: 1.2rem;">submit ratings</p>
+                </v-btn>
+                <v-dialog
+                    v-if="submitDialog"
+                    v-model="submitDialog"
+                    role="dialog"
+                    persistent
+                    max-width="800"
+                    scrollable
+                >
+                    <v-card>
+                        <v-card-title class="bg-black">
+                            <v-icon id="remind">mdi-information</v-icon> Submit Ratings for {{ event.title }}
+                        </v-card-title>
+                        <v-card-text class="dialog-content">
+                            <v-table density="compact" class="sticky-table">
+                                <thead>
+                                <tr>
+                                    <th colspan="2" class="text-left text-uppercase sticky-header">Candidate</th>
+                                    <th class="text-center text-uppercase sticky-header">Rating</th>
+                                    <th class="text-center text-uppercase sticky-header">Rank</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr
+                                    v-for="(team, index) in sortedTeams"
+                                    :key="team.id"
+                                >
+                                    <td class="text-right py-2 pr-2" style="width: 60px">{{ team.number }}</td>
+                                    <td class="py-2">
+                                        <div style="display: flex; align-items: center; gap: 12px; line-height: 1.2;">
+                                            <v-avatar size="40">
+                                                <v-img
+                                                    cover
+                                                    :src="`${$store.getters.appURL}/crud/uploads/${team.avatar}`"
+                                                    :alt="`${team.name}'s profile picture`"
+                                                />
+                                            </v-avatar>
+                                            <div>
+                                                <p class="ma-0 text-subtitle-2 text-uppercase font-weight-bold">{{ team.name }}</p>
+                                                <p class="ma-0"><small>{{ team.location }}</small></p>
+                                                <p class="ma-0 opacity-50" style="font-size: 13px"><small>for <b>{{ team.competing_for }}</b></small></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center py-2">{{ totals[`team_${team.id}`].value.toFixed(2) }}</td>
+                                    <td class="text-center py-2">{{ ranks[`team_${team.id}`] }}</td>
+                                </tr>
+                                </tbody>
+                            </v-table>
+                            <p class="mt-4 text-grey-darken-1 sticky-footer-message">
+                                Please review your ratings and ranks for <b>{{ event.title }}</b>, then submit when you're ready.
+                            </p>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
                             <v-btn
-                                class="py-7 bg-grey-lighten-1 text-grey-darken-3"
-                                @click="openSubmitDialog"
-                                :disabled="scoreSheetDisabled"
-                                block
-                                flat
+                                class="text-red-darken-1"
+                                :disabled="submitLoading"
+                                @click="submitDialog = false"
+                                size="large"
+                                height="50"
                             >
-                            <p style="font-size: 1.2rem;">submit ratings</p>
+                                Go Back
                             </v-btn>
-                            <v-dialog
-                                v-if="submitDialog"
-                                v-model="submitDialog"
-                                persistent
-                                max-width="400"
+                            <v-btn
+                                class="text-green-darken-1"
+                                :loading="submitLoading"
+                                @click="submitRatings"
+                                size="large"
+                                height="50"
                             >
-                                <v-card>
-                                    <v-card-title class="bg-black">
-                                        <v-icon id="remind">mdi-information</v-icon> Submit Ratings
-                                    </v-card-title>
-                                    <v-card-text>
-                                        Please confirm that you wish to finalize the ratings for <b>{{ event.title }}</b>. This action cannot be undone.
-                                    </v-card-text>
-                                    <v-card-actions>
-                                        <v-spacer></v-spacer>
-                                        <v-btn
-                                            class="text-red-darken-1"
-                                            :disabled="submitLoading"
-                                            @click="submitDialog = false"
-                                        >
-                                            Go Back
-                                        </v-btn>
-                                        <v-btn
-                                            class="text-green-darken-1"
-                                            :loading="submitLoading"
-                                            @click="submitRatings"
-                                        >
-                                            Submit
-                                        </v-btn>
-                                    </v-card-actions>
-                                </v-card>
-                            </v-dialog>
-                            <v-dialog
-                                v-if="inspectDialog"
-                                v-model="inspectDialog"
-                                persistent
-                                max-width="400"
-                            >
-                                <v-card>
-                                    <v-card-title class="bg-red-darken-4">
-                                        <v-icon id="warning">mdi-alert</v-icon>	Submit Ratings
-                                    </v-card-title>
-                                    <v-card-text>
-                                        <p class="mb-2 text-red-darken-4">
-                                            Sorry, your ratings for <b>{{ event.title }}</b> cannot be submitted as they must be from
-                                            <big><b>{{ minRating }}</b></big> to <big><b>{{ maxRating }}</b></big>.
-                                        </p>
-                                        <p class="text-red-darken-4">Please adjust your ratings and try submitting again.</p>
-                                    </v-card-text>
-                                    <v-card-actions>
-                                        <v-spacer></v-spacer>
-                                        <v-btn color="red-darken-4" @click="closeInspectDialog">Go Back</v-btn>
-                                    </v-card-actions>
-                                </v-card>
-                            </v-dialog>
-                        </v-col>
-                    </td>
-                </tr>
-			</tfoot>
-		</v-table>
+                                Submit
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+                <v-dialog
+                    v-if="inspectDialog"
+                    v-model="inspectDialog"
+                    role="dialog"
+                    persistent
+                    max-width="400"
+                >
+                    <v-card>
+                        <v-card-title class="bg-red-darken-4">
+                            <v-icon id="warning">mdi-alert</v-icon> Submit Ratings
+                        </v-card-title>
+                        <v-card-text>
+                            <p class="mb-2 text-red-darken-4">
+                                Sorry, your ratings for <b>{{ event.title }}</b> cannot be submitted as they must be from
+                                <big><b>{{ minRating }}</b></big> to <big><b>{{ maxRating }}</b></big>.
+                            </p>
+                            <p class="text-red-darken-4">Please adjust your ratings and try submitting again.</p>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="red-darken-4" @click="closeInspectDialog">Go Back</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-col>
+        </div>
 
 		<!-- loader -->
 		<div v-else-if="this.$route.params.eventSlug" class="d-flex justify-center align-center" style="height: 100vh;">
@@ -413,6 +450,17 @@
                     };
                 }
                 return errors;
+            },
+            sortedTeams() {
+                if (!this.submitDialog) {
+                    return [];
+                }
+
+                return [...this.teams].sort((a, b) => {
+                    const totalA = this.totals[`team_${a.id}`].value;
+                    const totalB = this.totals[`team_${b.id}`].value;
+                    return totalB - totalA;
+                });
             }
         },
         watch: {
@@ -696,16 +744,72 @@
 
 
 <style scoped>
-    tbody td, th {
-        height: 64px !important;
+    .main-table {
+        display: block;
+        overflow-y: auto;
+        max-height: calc(100vh - 150px);
     }
 
-    tbody td {
+    .main-table th {
+        position: sticky;
+        top: 0;
+        background-color: #fff;
+        z-index: 2;
         border-bottom: 1px solid #ddd;
-        padding-top: 9px !important;
-        padding-bottom: 9px !important;
     }
 
+    .sticky-table {
+        display: block;
+        overflow-y: auto;
+        height: auto;
+        width: 100%;
+    }
+
+    /* deeply target th elements in dialog table to override Vuetify styles */
+    :deep(.sticky-table th.sticky-header) {
+        position: sticky !important;
+        top: 0 !important;
+        background-color: #fff !important;
+        z-index: 4 !important;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* ensure thead and tr support stickiness */
+    :deep(.sticky-table thead),
+    :deep(.sticky-table thead tr) {
+        position: sticky;
+        top: 0;
+        background-color: #fff;
+        z-index: 4 !important;
+    }
+
+    .sticky-footer-message {
+        position: sticky;
+        bottom: 0;
+        background-color: #fff;
+        padding-top: 16px;
+        margin-bottom: 0;
+        z-index: 3 !important;
+    }
+
+    :deep(.v-table__wrapper) {
+        overflow: unset !important;
+    }
+
+    /* adjust dialog content to move scrollbar to edge */
+    .dialog-content {
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 64px);
+        overflow-y: auto;
+        padding: 0;
+    }
+
+    /* ensure v-card-text fills the dialog */
+    :deep(.v-card__text) {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
     #warning {
         animation: tilt-shaking 1ms linear infinite;
     }
