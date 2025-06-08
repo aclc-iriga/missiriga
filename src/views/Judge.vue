@@ -204,24 +204,69 @@
                             <p style="font-size: 1.2rem;">submit ratings</p>
                             </v-btn>
                             <v-dialog
-                                v-if="submitDialog"
                                 v-model="submitDialog"
-                                persistent
-                                max-width="400"
+                                :persistent="submitLoading"
+                                max-width="800"
+                                class="overflow-hidden"
                             >
                                 <v-card>
                                     <v-card-title class="bg-black">
-                                        <v-icon id="remind">mdi-information</v-icon> Submit Ratings
+                                        <div class="d-flex justify-space-between align-center">
+                                            <span><v-icon id="remind">mdi-information</v-icon> Submit Ratings for {{ event.title }}</span>
+                                            <v-btn icon variant="text" color="white" density="comfortable" :disabled="submitLoading" @click="submitDialog = false"><v-icon>mdi-close</v-icon></v-btn>
+                                        </div>
                                     </v-card-title>
-                                    <v-card-text>
-                                        Please confirm that you wish to finalize the ratings for <b>{{ event.title }}</b>. This action cannot be undone.
+                                    <v-card-text class="px-0">
+                                        <v-table density="compact" :height="$store.getters['windowHeight'] - 320" fixed-header fixed-footer hover>
+                                            <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="text-left text-uppercase">Candidate</th>
+                                                <th class="text-center text-uppercase">Rating</th>
+                                                <th class="text-center text-uppercase">Rank</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr
+                                                v-for="(team, index) in sortedTeams"
+                                                :key="team.id"
+                                            >
+                                                <td class="text-right py-2 pr-2" style="width: 60px"><h3 class="ma-0">{{ team.number }}</h3></td>
+                                                <td class="py-2">
+                                                    <div style="display: flex; align-items: center; gap: 12px; line-height: 1.2;">
+                                                        <v-avatar size="50">
+                                                            <v-img :src="`${$store.getters.appURL}/crud/uploads/${team.avatar}`" cover/>
+                                                        </v-avatar>
+                                                        <div>
+                                                            <p class="ma-0 text-subtitle-2 text-uppercase font-weight-bold">{{ team.name }}</p>
+                                                            <p class="ma-0"><small>{{ team.location }}</small></p>
+                                                            <p class="ma-0 opacity-50" style="font-size: 14px"><small>for <b>{{ team.competing_for }}</b></small></p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center py-2">{{ totals[`team_${team.id}`].value.toFixed(2) }}</td>
+                                                <td class="text-center py-2">{{ ranks[`team_${team.id}`] }}</td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="5" class="bg-white" v-if="sortedTeams.length > 0">
+                                                    <p class="mt-5">
+                                                        Please review your ratings and ranks for <b>{{ event.title }}</b>, then submit when you're ready.
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                        </v-table>
                                     </v-card-text>
-                                    <v-card-actions>
+                                    <v-card-actions class="pt-0">
                                         <v-spacer></v-spacer>
                                         <v-btn
                                             class="text-red-darken-1"
                                             :disabled="submitLoading"
                                             @click="submitDialog = false"
+                                            size="large"
+                                            height="50"
                                         >
                                             Go Back
                                         </v-btn>
@@ -229,6 +274,8 @@
                                             class="text-green-darken-1"
                                             :loading="submitLoading"
                                             @click="submitRatings"
+                                            size="large"
+                                            height="50"
                                         >
                                             Submit
                                         </v-btn>
@@ -413,6 +460,17 @@
                     };
                 }
                 return errors;
+            },
+            sortedTeams() {
+                if (!this.submitDialog) {
+                    return [];
+                }
+
+                return [...this.teams].sort((a, b) => {
+                    const totalA = this.totals[`team_${a.id}`].value;
+                    const totalB = this.totals[`team_${b.id}`].value;
+                    return totalB - totalA;
+                });
             }
         },
         watch: {
