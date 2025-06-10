@@ -164,6 +164,9 @@
                         signOut: this.signedOut
                     },
                     success: (data) => {
+                        // emit sign out event
+                        this.$emit('sign-out');
+
                         data = JSON.parse(data);
                         this.$store.commit('auth/setUser', data.user = null);
                         this.$router.push('/');
@@ -173,7 +176,7 @@
                         alert(`ERROR ${error.status}: ${error.statusText}`);
                         this.signingOut = false;
                     },
-                })
+                });
             },
 
             toggleHelp() {
@@ -204,6 +207,9 @@
                         user.calling = !user.calling;
                     },
                 });
+
+                // emit help status
+                this.$emit('toggle-help', user.calling);
             }
         },
         mounted() {

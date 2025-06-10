@@ -5,7 +5,8 @@ input[type=number]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-input[type=number] {
+input[type=number],
+.v-input.text-center input {
     text-align: center !important;
 }
 

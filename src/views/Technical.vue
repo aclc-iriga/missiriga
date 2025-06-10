@@ -61,9 +61,10 @@
                     </td>
                     <td>
                         <v-text-field
-                            type="number"
+                            type="text"
+                            inputmode="decimal"
+                            class="text-center"
                             variant="outlined"
-                            align="center"
                             justify="center"
                             hide-details
                             single-line
@@ -90,6 +91,17 @@
                             @keydown.enter="moveDown(teamIndex)"
                             @keydown.up.prevent="moveUp(teamIndex)"
                             @focus.passive="updateCoordinates(teamIndex)"
+                            @keydown="e => {
+                                const navKeys = ['Backspace','Tab','ArrowLeft','ArrowRight','Delete']
+                                if (navKeys.includes(e.key)) return;
+                                if (e.ctrlKey || e.metaKey) return;
+                                if (e.key === '.' && e.target.value.includes('.')) { e.preventDefault(); return; }
+                                if (!/[0-9.]/.test(e.key)) { e.preventDefault(); }
+                            }"
+                            @paste="e => {
+                                const text = (e.clipboardData || window.clipboardData).getData('text');
+                                if (!/^[0-9]*\.?[0-9]*$/.test(text)) { e.preventDefault() }
+                            }"
                         />
                     </td>
                 </tr>

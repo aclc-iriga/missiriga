@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 11, 2024 at 10:11 AM
+-- Generation Time: Jun 10, 2025 at 11:16 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -46,7 +46,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `number`, `name`, `avatar`, `username`, `password`, `active_portion`, `called_at`, `pinged_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 'DEVELOPMENT', 'no-avatar.jpg', 'admin', 'admin', NULL, NULL, NULL, '2023-02-19 07:36:32', '2023-05-28 03:58:25');
+(1, 1, 'DEVELOPMENT', 'no-avatar.jpg', 'admin', 'admin', NULL, NULL, NULL, '2023-02-19 07:36:32', '2025-06-10 09:15:51');
 
 -- --------------------------------------------------------
 
@@ -225,7 +225,7 @@ CREATE TABLE `judges` (
 --
 
 INSERT INTO `judges` (`id`, `number`, `name`, `avatar`, `username`, `password`, `active_portion`, `called_at`, `pinged_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Judge 01', 'no-avatar.jpg', 'judge01', 'judge01', NULL, NULL, NULL, '2023-04-06 13:58:11', '2024-06-11 08:11:27'),
+(1, 1, 'Judge 01', 'no-avatar.jpg', 'judge01', 'judge01', 'swimsuit', NULL, '2025-06-10 02:14:39', '2023-04-06 13:58:11', '2025-06-10 02:14:39'),
 (2, 2, 'Judge 02', 'no-avatar.jpg', 'judge02', 'judge02', NULL, NULL, NULL, '2023-04-06 13:58:28', '2023-04-06 13:58:28'),
 (3, 3, 'Judge 03', 'no-avatar.jpg', 'judge03', 'judge03', NULL, NULL, NULL, '2023-04-06 13:58:42', '2023-04-06 13:58:42'),
 (4, 4, 'Judge 04', 'no-avatar.jpg', 'judge04', 'judge04', NULL, NULL, NULL, '2023-04-06 13:59:26', '2023-04-06 13:59:26'),
@@ -368,23 +368,23 @@ CREATE TABLE `teams` (
 --
 
 INSERT INTO `teams` (`id`, `number`, `name`, `location`, `avatar`, `competing_for`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Janna Eloisa Lanuzga', 'Nabua, Camarines Sur', 'no-avatar.jpg', 'Miss Rinconada', '2024-06-10 21:26:11', '2024-06-10 21:26:11'),
-(2, 2, 'Jodelyn Mendoza', 'Nabua, Camarines Sur', 'no-avatar.jpg', 'Miss Rinconada', '2024-06-10 21:26:31', '2024-06-10 21:26:31'),
-(3, 3, 'Maria Shelley Sabularse', 'Baao, Camarines Sur', 'no-avatar.jpg', 'Miss Rinconada', '2024-06-10 21:26:54', '2024-06-10 21:26:54'),
-(4, 4, 'Mary Claire Chavez', 'Buhi, Camarines Sur', 'no-avatar.jpg', 'Miss Rinconada', '2024-06-10 21:27:15', '2024-06-10 21:27:15'),
-(5, 5, 'Nicole Joycean Peñaserada', 'Buhi, Camarines Sur', 'no-avatar.jpg', 'Miss Rinconada', '2024-06-10 21:28:09', '2024-06-10 21:28:09'),
-(6, 6, 'Lauriane Magistrado', 'Iriga City', 'no-avatar.jpg', 'Miss Iriga', '2024-06-10 21:28:33', '2024-06-10 21:48:17'),
-(7, 7, 'Jessabel Bearis', 'Iriga City', 'no-avatar.jpg', 'Miss Iriga', '2024-06-10 21:28:50', '2024-06-10 21:48:22'),
-(8, 8, 'Lisa Mae General', 'Iriga City', 'no-avatar.jpg', 'Miss Iriga', '2024-06-10 21:29:05', '2024-06-10 21:48:26'),
-(9, 9, 'Bettina Pauline Francia', 'Iriga City', 'no-avatar.jpg', 'Miss Iriga', '2024-06-10 21:29:23', '2024-06-10 21:48:31'),
-(10, 10, 'Katrina Claudia Jamin', 'Iriga City', 'no-avatar.jpg', 'Miss Iriga', '2024-06-10 21:29:41', '2024-06-10 21:48:39'),
-(11, 11, 'Sherrie Mae Romaraog', 'Iriga City', 'no-avatar.jpg', 'Miss Iriga', '2024-06-10 21:29:58', '2024-06-10 21:48:35'),
-(12, 12, 'Mary Dine Monge', 'Iriga City', 'no-avatar.jpg', 'Miss Iriga', '2024-06-10 21:30:15', '2024-06-10 21:48:43'),
-(13, 13, 'Angelica Maximo', 'Polangui, Albay', 'no-avatar.jpg', 'Miss Bicol Tourism', '2024-06-10 21:30:34', '2024-06-10 21:48:48'),
-(14, 14, 'Cherry Love Jebulan', 'Sto. Domingo, Albay', 'no-avatar.jpg', 'Miss Bicol Tourism', '2024-06-10 21:30:58', '2024-06-10 21:48:52'),
-(15, 15, 'Dara Sofia Cartujano', 'Naga City, Camarines Sur', 'no-avatar.jpg', 'Miss Bicol Tourism', '2024-06-10 21:31:22', '2024-06-10 21:48:57'),
-(16, 16, 'Eaula Marie Balcueva', 'Presentacion, Camarines Sur', 'no-avatar.jpg', 'Miss Bicol Tourism', '2024-06-10 21:32:04', '2024-06-10 21:49:02'),
-(17, 17, 'Liezl Anne Iñigo', 'Camaligan, Camarines Sur', 'no-avatar.jpg', 'Miss Bicol Tourism', '2024-06-10 21:32:34', '2024-06-10 21:49:58');
+(1, 1, 'Janna Eloisa Lanuzga', 'Nabua, Camarines Sur', '01.jpg', 'Miss Rinconada', '2024-06-10 21:26:11', '2025-06-10 09:14:11'),
+(2, 2, 'Jodelyn Mendoza', 'Nabua, Camarines Sur', '02.jpg', 'Miss Rinconada', '2024-06-10 21:26:31', '2025-06-10 09:14:16'),
+(3, 3, 'Maria Shelley Sabularse', 'Baao, Camarines Sur', '03.jpg', 'Miss Rinconada', '2024-06-10 21:26:54', '2025-06-10 09:14:21'),
+(4, 4, 'Mary Claire Chavez', 'Buhi, Camarines Sur', '04.jpg', 'Miss Rinconada', '2024-06-10 21:27:15', '2025-06-10 09:14:26'),
+(5, 5, 'Nicole Joycean Peñaserada', 'Buhi, Camarines Sur', '05.jpg', 'Miss Rinconada', '2024-06-10 21:28:09', '2025-06-10 09:14:29'),
+(6, 6, 'Lauriane Magistrado', 'Iriga City', '06.jpg', 'Miss Iriga', '2024-06-10 21:28:33', '2025-06-10 09:14:33'),
+(7, 7, 'Jessabel Bearis', 'Iriga City', '07.jpg', 'Miss Iriga', '2024-06-10 21:28:50', '2025-06-10 09:14:37'),
+(8, 8, 'Lisa Mae General', 'Iriga City', '08.jpg', 'Miss Iriga', '2024-06-10 21:29:05', '2025-06-10 09:14:40'),
+(9, 9, 'Bettina Pauline Francia', 'Iriga City', '09.jpg', 'Miss Iriga', '2024-06-10 21:29:23', '2025-06-10 09:14:44'),
+(10, 10, 'Katrina Claudia Jamin', 'Iriga City', '10.jpg', 'Miss Iriga', '2024-06-10 21:29:41', '2025-06-10 09:14:48'),
+(11, 11, 'Sherrie Mae Romaraog', 'Iriga City', '11.jpg', 'Miss Iriga', '2024-06-10 21:29:58', '2025-06-10 09:14:52'),
+(12, 12, 'Mary Dine Monge', 'Iriga City', '12.jpg', 'Miss Iriga', '2024-06-10 21:30:15', '2025-06-10 09:14:56'),
+(13, 13, 'Angelica Maximo', 'Polangui, Albay', '13.jpg', 'Miss Bicol Tourism', '2024-06-10 21:30:34', '2025-06-10 09:15:02'),
+(14, 14, 'Cherry Love Jebulan', 'Sto. Domingo, Albay', '14.jpg', 'Miss Bicol Tourism', '2024-06-10 21:30:58', '2025-06-10 09:15:08'),
+(15, 15, 'Dara Sofia Cartujano', 'Naga City, Camarines Sur', '15.jpg', 'Miss Bicol Tourism', '2024-06-10 21:31:22', '2025-06-10 09:15:12'),
+(16, 16, 'Eaula Marie Balcueva', 'Presentacion, Camarines Sur', '16.jpg', 'Miss Bicol Tourism', '2024-06-10 21:32:04', '2025-06-10 09:15:19'),
+(17, 17, 'Liezl Anne Iñigo', 'Camaligan, Camarines Sur', '17.jpg', 'Miss Bicol Tourism', '2024-06-10 21:32:34', '2025-06-10 09:15:25');
 
 -- --------------------------------------------------------
 
@@ -678,7 +678,7 @@ ALTER TABLE `points`
 -- AUTO_INCREMENT for table `ratings`
 --
 ALTER TABLE `ratings`
-  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=562;
 
 --
 -- AUTO_INCREMENT for table `teams`

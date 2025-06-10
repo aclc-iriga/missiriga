@@ -18,6 +18,7 @@ public
 app/_test.php
 app/_env.php
 app/config/database.php
+app/config/websocket.php
 app/crud/uploads/*
 !app/crud/uploads/01.jpg
 !app/crud/uploads/02.jpg

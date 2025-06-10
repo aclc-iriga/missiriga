@@ -106,3 +106,12 @@ The default ***username*** and ***password*** is `admin`.
 #### Printing Results
 For **printing results**, click the print button in your browser or press `CTRL + P`,
 then properly set up the page for printing.
+
+---
+## Bullet Train Dashboard
+A blazing-fast dashboard inspired by bullet trains *gikan sa Japan!*
+
+### Installation
+1. Download and run [github.com/aclc-iriga/tabulation-ws](https://github.com/aclc-iriga/tabulation-ws).
+2. Copy [**`app/config/websocket.example.php`**](app/config/websocket.example.php) to `app/config/websocket.php`. Then update the WebSocket server URL in the new config file.
+3. Access [localhost/missbato-scr/app/dashboard](http://localhost/missbato-scr/app/dashboard)

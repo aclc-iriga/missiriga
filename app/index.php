@@ -3,8 +3,17 @@ require_once '_init.php';
 
 // get requests
 if(isset($_GET['getUser'])) {
+    // get config values
+    $websocket_url = '';
+    if(file_exists('config/websocket.php')) {
+        require_once 'config/websocket.php';
+        if (isset($websocket))
+            $websocket_url = $websocket['url'];
+    }
+
     echo json_encode([
-        'user' => getUser()
+        'user'          => getUser(),
+        'websocket_url' => $websocket_url
     ]);
 
     exit;
@@ -66,7 +75,8 @@ $routes = [
     [ "name" => "Arrangements"          , "route" => "crud/orders"                  ],
     [ "name" => "Titles"                , "route" => "crud/titles"                  ],
     [ "name" => "Best in Swimsuit"      , "route" => "results/best-in-swimsuit"     ],
-    [ "name" => "Best in Evening Gown"  , "route" => "results/best-in-evening-gown" ]
+    [ "name" => "Best in Evening Gown"  , "route" => "results/best-in-evening-gown" ],
+    [ "name" => "Bullet Train Dashboard", "route" => "dashboard"                    ]
 ];
 ?>
 <!DOCTYPE html>
@@ -132,6 +142,5 @@ $routes = [
             </div>
         </div>
     </div>
-
 </body>
 </html>

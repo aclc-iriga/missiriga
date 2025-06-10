@@ -113,6 +113,9 @@
                             name: data.user.userType
                         });
                     }
+                    if (data.websocket_url) {
+                        this.$store.commit('websocketUrl', data.websocket_url);
+                    }
                     setTimeout(() => {
                         this.loading = false;
                     }, 1000);

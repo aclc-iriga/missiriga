@@ -1,5 +1,5 @@
 <template>
-    <top-nav/>
+    <top-nav @toggle-help="handleToggleHelp" @sign-out="handleSignOut"/>
 
     <side-nav/>
 
@@ -62,8 +62,179 @@
                         :class="$vuetify.display.mdAndDown ? 'text-body-1' : 'text-h6'"
 					>
 						Rank
-                        <p class="ma-0 text-subtitle-2">&nbsp;</p>
+                        <p class="ma-0 text-subtitle-2" :class="{ 'text-success': tiesTotal <= 0, 'text-warning': tiesTotal > 0 }">
+                            (<b v-if="tiesTotal > 0">{{ tiesTotal }}</b><span v-else>NO</span> TIE<template v-if="tiesTotal > 1">S</template>)
+                        </p>
 					</th>
+                    <th>
+                        <!-- Tie Breaker Dialog -->
+                        <v-dialog
+                            v-model="tieBreaker.opened"
+                            max-width="1024"
+                            scrollable
+                        >
+                            <template #activator="{ props }">
+                                <v-btn @click="openTieBreaker" v-bind="props" variant="outlined" color="warning" density="compact" :disabled="tiesTotal <= 0"
+                                    style=" white-space: normal; overflow: visible; height: auto; padding-top: 8px; padding-bottom: 8px;"
+                                >
+                                    <span class="d-flex flex-column"><span><v-icon>mdi-open-in-new</v-icon> Tie</span><span>Breaker</span>
+                                    </span>
+                                </v-btn>
+                            </template>
+                            <v-card>
+                                <v-card-title>
+                                    <div class="d-flex justify-space-between align-center">
+                                        <span class="text-warning">Tie Breaker</span>
+                                        <v-btn icon variant="text" color="warning" @click="closeTieBreaker"><v-icon>mdi-close</v-icon></v-btn>
+                                    </div>
+                                </v-card-title>
+                                <v-divider/>
+                                <v-card-text>
+                                    <v-sheet
+                                        v-for="(tieGroup, tieGroupKey, tieGroupIndex) in tieBreaker.tieGroups"
+                                        :key="tieGroupKey"
+                                    >
+                                        <v-row no-gutters>
+                                            <v-col cols="12" sm="5" md="5" lg="5" class="text-center text-sm-left">
+                                                <div class="pb-3">
+                                                    <h2>Ties at Rank {{ tieGroupKey.replace('rank_', '') }}</h2>
+                                                </div>
+                                            </v-col>
+                                            <v-col cols="12" sm="7" md="7" lg="7" class="text-center text-sm-left" :style="tieGroup.result.length > 0 ? 'border-bottom: 1px solid #ddd;' : ''">
+                                                <div class="pb-3">
+                                                    <h2>Assign to Slots: Rank {{ tieGroup.slots[0] }} <v-icon>mdi-arrow-right</v-icon> Rank {{ tieGroup.slots[tieGroup.slots.length - 1] }}</h2>
+                                                </div>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row no-gutters>
+                                            <!-- Tie Breaker :: Ties -->
+                                            <v-col cols="10" sm="4" md="4" lg="4">
+                                                <draggable
+                                                    :style="`min-height: ${tieGroup.slots.length * 76}px; height: 100%; cursor: grab`"
+                                                    :list="tieGroup.teams"
+                                                    :group="tieGroupKey"
+                                                    itemKey="id"
+                                                >
+                                                    <template #item="{ element, index }">
+                                                        <div class="d-flex align-center py-1" style="height: 76px; column-gap: 8px;">
+                                                            <div class="drag-handle flex-grow-0 flex-shrink-0" style="width: 24px; cursor: grab; display: flex; align-items: center; justify-content: center;">
+                                                                <v-icon small>mdi-drag-vertical</v-icon>
+                                                            </div>
+                                                            <div class="text-center flex-grow-0 flex-shrink-0" style="width: 32px;">
+                                                                <h2 class="ma-0">{{ element.number }}</h2>
+                                                            </div>
+                                                            <v-avatar class="flex-grow-0 flex-shrink-0" size="60">
+                                                                <v-img cover :src="`${$store.getters.appURL}/crud/uploads/${element.avatar}`" transition="none" eager/>
+                                                            </v-avatar>
+                                                            <div class="overflow-hidden">
+                                                                <p class="mt-0 me-0 mb-1 ms-0 text-subtitle-2 text-uppercase font-weight-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; width: 100%;">
+                                                                    {{ element.name }}
+                                                                </p>
+                                                                <p class="mb-0" v-if="element.location.trim() !== ''" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; opacity: 0.8; width: 100%;">
+                                                                    <small><b>{{ element.location }}</b></small>
+                                                                </p>
+                                                                <p class="mb-0" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; opacity: 0.85; width: 100%;">
+                                                                    <small style="font-size: 13px">for <b>{{ element.competing_for }}</b></small>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </draggable>
+                                            </v-col>
+
+                                            <!-- Tie Breaker :: Ties Action -->
+                                            <v-col cols="2" sm="1" md="1" lg="1">
+                                                <div
+                                                    v-for="(tieGroupTeam, tieGroupTeamIndex) in tieGroup.teams"
+                                                    :key="tieGroupTeam.id"
+                                                    class="d-flex justify-start align-center"
+                                                    style="height: 76px; padding-left: 8px; column-gap: 8px;"
+                                                >
+                                                    <v-btn icon density="comfortable" color="warning" elevation="0" @click="toRightTieBreaker(tieGroupKey, tieGroupTeamIndex)">
+                                                        <v-icon>mdi-arrow-right</v-icon>
+                                                    </v-btn>
+                                                </div>
+                                            </v-col>
+
+                                            <!-- Tie Breaker :: Slot Label -->
+                                            <v-col cols="2" sm="1" md="1" lg="1">
+                                                <div v-for="(slot, slotIndex) in tieGroup.slots" :key="slot">
+                                                    <div
+                                                        class="d-flex justify-center align-center text-center"
+                                                        style="height: 76px; border-bottom: 1px solid #ddd; border-left: 1px solid #ddd"
+                                                        :style="{ 'border-top': (slotIndex === 0 && tieGroup.result.length <= 0) ? '1px solid #ddd' : '0' }"
+                                                    >
+                                                        <h4 class="ma-0 text-success" :style="{ 'opacity': tieGroup.result[slotIndex] ? '1' : '0.55' }"><span style="font-size: 1.1rem;">R</span>ank <span style="font-size: 1.2rem;">{{ slot }}</span></h4>
+                                                    </div>
+                                                </div>
+                                            </v-col>
+
+                                            <!-- Tie Breaker :: Slots -->
+                                            <v-col cols="6" sm="4" md="4" lg="4">
+                                                <draggable
+                                                    :style="`min-height: ${tieGroup.slots.length * 76}px; height: 100%; cursor: grab;`"
+                                                    :list="tieGroup.result"
+                                                    :group="tieGroupKey"
+                                                    itemKey="id"
+                                                >
+                                                    <template #item="{ element, index }">
+                                                        <div class="d-flex align-center py-1" style="height: 76px; column-gap: 8px; border-bottom: 1px solid #ddd;">
+                                                            <div class="drag-handle flex-grow-0 flex-shrink-0" style="width: 24px; cursor: grab; display: flex; align-items: center; justify-content: center;">
+                                                                <v-icon small>mdi-drag-vertical</v-icon>
+                                                            </div>
+                                                            <div class="text-center flex-grow-0 flex-shrink-0" style="width: 32px;">
+                                                                <h2 class="ma-0">{{ element.number }}</h2>
+                                                            </div>
+                                                            <v-avatar class="flex-grow-0 flex-shrink-0" size="60">
+                                                                <v-img cover :src="`${$store.getters.appURL}/crud/uploads/${element.avatar}`" transition="none" eager/>
+                                                            </v-avatar>
+                                                            <div class="overflow-hidden">
+                                                                <p class="mt-0 me-0 mb-1 ms-0 text-subtitle-2 text-uppercase font-weight-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; width: 100%;">
+                                                                    {{ element.name }}
+                                                                </p>
+                                                                <p class="mb-0" v-if="element.location.trim() !== ''" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; opacity: 0.8; width: 100%;">
+                                                                    <small><b>{{ element.location }}</b></small>
+                                                                </p>
+                                                                <p class="mb-0" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; opacity: 0.85; width: 100%;">
+                                                                    <small style="font-size: 13px;">for <b>{{ element.competing_for }}</b></small>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </draggable>
+                                            </v-col>
+
+                                            <!-- Tie Breaker :: Slot Actions -->
+                                            <v-col cols="4" sm="2" md="2" lg="2">
+                                                <div
+                                                    v-for="(tieGroupResult, tieGroupResultIndex) in tieGroup.result"
+                                                    :key="tieGroupResult.id"
+                                                    class="d-flex justify-end align-center"
+                                                    style="height: 76px; padding-right: 8px; column-gap: 8px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd"
+                                                >
+                                                    <v-btn icon density="comfortable" color="success" elevation="0" variant="text" @click="sortUpTieBreaker(tieGroupKey, tieGroupResultIndex)" :disabled="tieGroupResultIndex <= 0">
+                                                        <v-icon>mdi-arrow-up</v-icon>
+                                                    </v-btn>
+                                                    <v-btn icon density="comfortable" color="success" elevation="0" variant="text" @click="sortDownBreaker(tieGroupKey, tieGroupResultIndex)" :disabled="tieGroupResultIndex >= (tieGroup.result.length - 1)">
+                                                        <v-icon>mdi-arrow-down</v-icon>
+                                                    </v-btn>
+                                                    <v-btn icon density="comfortable" color="error" elevation="0" variant="text" @click="toLeftTieBreaker(tieGroupKey, tieGroupResultIndex)">
+                                                        <v-icon>mdi-close</v-icon>
+                                                    </v-btn>
+                                                </div>
+                                            </v-col>
+                                        </v-row>
+                                        <v-divider class="my-10" v-if="tieGroupIndex < (Object.keys(tieBreaker.tieGroups).length - 1)"/>
+                                    </v-sheet>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-spacer />
+                                    <v-btn text @click="closeTieBreaker" size="large">Close</v-btn>
+                                    <v-btn variant="flat" color="warning" @click="applyTieBreaker" size="large" :disabled="tieBreaker.loading">Confirm Slots</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </th>
 				</tr>
 			</thead>
 			<tbody>
@@ -93,17 +264,18 @@
                     >
                         <p class="ma-0 text-subtitle-2 text-uppercase font-weight-bold" style="line-height: 1.2">{{ team.name }}</p>
                         <p class="mt-1 mb-0" style="line-height: 1"><small>{{ team.location }}</small></p>
-                      <p class="mt-1 mb-0 opacity-50" style="line-height: 1; font-size: 13px"><small>for <b>{{ team.competing_for }}</b></small></p>
-
+                        <p class="mt-1 mb-0 opacity-50" style="line-height: 1; font-size: 14px"><small>for <b>{{ team.competing_for }}</b></small></p>
                     </td>
 					<td
 						v-for="(criterion, criterionIndex) in criteria"
 						:key="criterion.id"
 						:class="{ 'bg-grey-lighten-4': coordinates.x == criterionIndex && !scoreSheetDisabled }"
 					>
+                        <!-- Criteria Rating (Note: opted for type="text" because of caret-focus issue on backspace inside type="number") -->
 						<v-text-field
-							type="number"
-							class="font-weight-bold"
+							type="text"
+                            inputmode="decimal"
+							class="font-weight-bold text-center"
 							hide-details
 							single-line
 							:min="0"
@@ -141,12 +313,25 @@
 							@keydown.right.prevent="moveRight(criterionIndex, teamIndex)"
 							@keydown.left.prevent="moveLeft(criterionIndex, teamIndex)"
 							@focus.passive="updateCoordinates(criterionIndex, teamIndex)"
+                            @keydown="e => {
+                                const navKeys = ['Backspace','Tab','ArrowLeft','ArrowRight','Delete']
+                                if (navKeys.includes(e.key)) return;
+                                if (e.ctrlKey || e.metaKey) return;
+                                if (e.key === '.' && e.target.value.includes('.')) { e.preventDefault(); return; }
+                                if (!/[0-9.]/.test(e.key)) { e.preventDefault(); }
+                            }"
+                            @paste="e => {
+                                const text = (e.clipboardData || window.clipboardData).getData('text');
+                                if (!/^[0-9]*\.?[0-9]*$/.test(text)) { e.preventDefault() }
+                            }"
 						/>
 					</td>
 					<td :class="{ 'bg-grey-lighten-4': coordinates.x == criteria.length && !scoreSheetDisabled }">
+                        <!-- Total Rating (Note: opted for type="text" because of caret-focus issue on backspace inside type="number") -->
 						<v-text-field
-							type="number"
-							class="font-weight-bold"
+							type="text"
+                            inputmode="decimal"
+							class="font-weight-bold text-center"
                             variant="outlined"
                             hide-details
 							:loading="totals[`team_${team.id}`].loading"
@@ -173,19 +358,56 @@
 							@keydown.right.prevent="moveRight(criteria.length, teamIndex)"
 							@keydown.left.prevent="moveLeft(criteria.length, teamIndex)"
 							@focus.passive="updateCoordinates(criteria.length, teamIndex)"
+                            @keydown="e => {
+                                const navKeys = ['Backspace','Tab','ArrowLeft','ArrowRight','Delete']
+                                if (navKeys.includes(e.key)) return;
+                                if (e.ctrlKey || e.metaKey) return;
+                                if (e.key === '.' && e.target.value.includes('.')) { e.preventDefault(); return; }
+                                if (!/[0-9.]/.test(e.key)) { e.preventDefault(); }
+                            }"
+                            @paste="e => {
+                                const text = (e.clipboardData || window.clipboardData).getData('text');
+                                if (!/^[0-9]*\.?[0-9]*$/.test(text)) { e.preventDefault() }
+                            }"
 						/>
 					</td>
                     <td
-                        class="text-center font-weight-bold"
+                        class="text-center font-weight-bold pa-0"
                         :class="{
                             'text-grey-darken-2': coordinates.y != teamIndex && !scoreSheetDisabled,
                             'text-grey-darken-4': coordinates.y == teamIndex && !scoreSheetDisabled,
                             'text-grey-darken-1': scoreSheetDisabled,
                         }"
                     >
-                        <span :style="{'opacity': team.disabled ? 0.6 : 1}">{{ ranks[`team_${team.id}`] }}</span>
+                        <h4 class="ma-0" style="font-size: 1.1rem;" :style="{'opacity': team.disabled ? 0.6 : 1}">{{ ranks[`team_${team.id}`] }}</h4>
                     </td>
-				</tr>
+                    <td class="pa-0 text-center">
+                        <template v-if="`team_${team.id}` in ties">
+                            <v-tooltip location="top" :content-class="'transparent-tooltip'">
+                                <template #activator="{ props }">
+                                    <svg
+                                        v-bind="props"
+                                        width="12"
+                                        height="12"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        style="cursor: pointer; opacity: 0.7"
+                                    >
+                                        <circle cx="6" cy="6" r="6" :fill="ties[`team_${team.id}`].color" />
+                                    </svg>
+                                </template>
+                                <span
+                                    style="color: white; padding: 4px 8px; border-radius: 4px; display: inline-block; opacity: 0.7"
+                                    :style="{ 'background-color': ties[`team_${team.id}`].color }"
+                                >
+                                    {{ ties[`team_${team.id}`].tooltip }}
+                                </span>
+                            </v-tooltip>
+                        </template>
+                        <svg v-else width="12" height="12" xmlns="http://www.w3.org/2000/svg" style="visibility: hidden">
+                            <circle cx="6" cy="6" r="6" fill="#FF0000" />
+                        </svg>
+                    </td>
+                </tr>
 			</tbody>
 			<!--	Dialog	  -->
 			<tfoot>
@@ -216,7 +438,7 @@
                                             <v-btn icon variant="text" color="white" density="comfortable" :disabled="submitLoading" @click="submitDialog = false"><v-icon>mdi-close</v-icon></v-btn>
                                         </div>
                                     </v-card-title>
-                                    <v-card-text class="px-0">
+                                    <v-card-text class="px-0 pt-0">
                                         <v-table density="compact" :height="$store.getters['windowHeight'] - 320" fixed-header fixed-footer hover>
                                             <thead>
                                             <tr>
@@ -244,15 +466,16 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="text-center py-2">{{ totals[`team_${team.id}`].value.toFixed(2) }}</td>
-                                                <td class="text-center py-2">{{ ranks[`team_${team.id}`] }}</td>
+                                                <td class="text-center py-2 text-dark">{{ totals[`team_${team.id}`].value.toFixed(2) }}</td>
+                                                <td class="text-center py-2 text-dark">{{ ranks[`team_${team.id}`] }}</td>
                                             </tr>
                                             </tbody>
                                             <tfoot>
                                             <tr>
                                                 <td colspan="5" class="bg-white" v-if="sortedTeams.length > 0">
-                                                    <p class="mt-5">
+                                                    <p class="mt-5" style="line-height: 1.6">
                                                         Please review your ratings and ranks for <b>{{ event.title }}</b>, then submit when you're ready.
+                                                        <template v-if="tiesTotal > 1">You can also open the <a @click.prevent="openTieBreaker" class="text-warning font-weight-medium" style="cursor: pointer">Tie Breaker</a> if you'd like to resolve ties first.</template>
                                                     </p>
                                                 </td>
                                             </tr>
@@ -328,13 +551,15 @@
     import topNav from '../components/nav/TopNav.vue';
     import sideNav from '../components/nav/SideNav.vue';
     import $ from 'jquery';
+    import draggableComponent from 'vuedraggable';
 
     export default {
         name: 'Judge',
         emits: ['startPing'],
         components: {
             topNav,
-            sideNav
+            sideNav,
+            draggable: draggableComponent
         },
         data() {
             return {
@@ -351,10 +576,25 @@
                 coordinates: {
                     x: -1,
                     y: -1
-                }
+                },
+                tieBreaker: {
+                    opened   : false,
+                    loading  : false,
+                    tieGroups: {}
+                },
+                competition: '',
+                ws: null
             }
         },
         computed: {
+            teamsAssoc() {
+                const teams = {};
+                for (let i = 0; i < this.teams.length; i++) {
+                    teams[`team_${this.teams[i].id}`] = this.teams[i];
+                }
+
+                return teams;
+            },
             ranks() {
                 const teamRanks = {};
 
@@ -408,6 +648,65 @@
                     ctr += size;
                 }
                 return teamRanks;
+            },
+            tieGroups() {
+                // raw groups
+                const raw = {};
+                for (const teamKey in this.ranks) {
+                    const rank = this.ranks[teamKey];
+                    const key = `rank_${rank}`;
+                    if (!raw[key]) raw[key] = [];
+                    raw[key].push(teamKey);
+                }
+                // sort the entries by the number after "rank_"
+                const sortedEntries = Object.entries(raw).sort(
+                    ([aKey], [bKey]) => {
+                        const aNum = parseInt(aKey.split('_')[1], 10);
+                        const bNum = parseInt(bKey.split('_')[1], 10);
+                        return aNum - bNum;
+                    }
+                );
+                // rebuild an object with insertion order = sorted order
+                return Object.fromEntries(sortedEntries);
+            },
+            ties() {
+                const ties = {};
+                let ctr = -1;
+                for(const rankKey in this.tieGroups) {
+                    const rank = rankKey.replace('rank_', '');
+                    ctr += 1;
+                    const teamKeys = this.tieGroups[rankKey];
+                    if (teamKeys.length > 1) {
+                        for (let i = 0; i < teamKeys.length; i++) {
+                            if (!(teamKeys[i] in ties)) {
+                                ties[teamKeys[i]] = {
+                                    rank   : rank,
+                                    color  : this.primaryColors[ctr],
+                                    equals : {
+                                        teamKeys   : [],
+                                        teamNumbers: [],
+                                        phrase     : ''
+                                    },
+                                    tooltip: ''
+                                }
+                            }
+                            for (let j = 0; j < teamKeys.length; j++) {
+                                if (teamKeys[j] !== teamKeys[i]) {
+                                    ties[teamKeys[i]].equals.teamKeys.push(teamKeys[j]);
+                                    ties[teamKeys[i]].equals.teamNumbers.push(`#${this.teamsAssoc[teamKeys[j]].number}`);
+                                }
+                            }
+                            // compute tooltip
+                            ties[teamKeys[i]].equals.phrase = ties[teamKeys[i]].equals.teamNumbers.join(', ').replace(/, ([^,]*)$/, ' and $1');
+                            ties[teamKeys[i]].tooltip = `Candidate #${this.teamsAssoc[teamKeys[i]].number} is TIE with Candidate${ties[teamKeys[i]].equals.teamKeys.length > 1 ? 's' : ''} ${ties[teamKeys[i]].equals.phrase} at RANK ${rank}.`
+                        }
+                    }
+                }
+
+                return ties;
+            },
+            tiesTotal() {
+                return Object.keys(this.ties).length;
             },
             scoreSheetHeight() {
                 return this.$store.getters.windowHeight - 64;
@@ -471,6 +770,79 @@
                     const totalB = this.totals[`team_${b.id}`].value;
                     return totalB - totalA;
                 });
+            },
+            primaryColors() {
+                const colors = [];
+                const n = this.teams.length || 1;
+                const GOLDEN_ANGLE = 137.508;
+
+                // HSL to RGB
+                const hslToRgb = (h, s, l) => {
+                    h /= 360;
+                    let r, g, b;
+                    if (s === 0) {
+                        r = g = b = l;
+                    }
+                    else {
+                        const hue2rgb = (p, q, t) => {
+                            if (t < 0) t += 1;
+                            if (t > 1) t -= 1;
+                            if (t < 1 / 6) return p + (q - p) * 6 * t;
+                            if (t < 1 / 2) return q;
+                            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                            return p;
+                        };
+                        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                        const p = 2 * l - q;
+                        r = hue2rgb(p, q, h + 1 / 3);
+                        g = hue2rgb(p, q, h);
+                        b = hue2rgb(p, q, h - 1 / 3);
+                    }
+                    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+                };
+
+                // RGB to HEX
+                const rgbToHex = (r, g, b) => {
+                    const toHex = (x) => x.toString(16).padStart(2, "0");
+                    return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
+                };
+
+                // contrast ratio for white (255,255,255)
+                const getLuminance = (r, g, b) => {
+                    const toLinear = (c) => {
+                        c /= 255;
+                        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                    };
+                    const [R, G, B] = [toLinear(r), toLinear(g), toLinear(b)];
+                    return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+                };
+
+                const contrastWithWhite = (r, g, b) => {
+                    const lum1 = getLuminance(r, g, b);
+                    const lum2 = 1; // white
+                    return (lum2 + 0.05) / (lum1 + 0.05); // must be >= 4.5 for normal text
+                };
+
+                for (let i = 0; i < n; i++) {
+                    const hue = (i * GOLDEN_ANGLE) % 360;
+                    let saturation = 0.65;
+                    let lightness = 0.45;
+
+                    let r, g, b;
+                    let contrast = 0;
+
+                    // try darker shades until contrast >= 4.5
+                    while (lightness > 0.2) {
+                        [r, g, b] = hslToRgb(hue, saturation, lightness);
+                        contrast = contrastWithWhite(r, g, b);
+                        if (contrast >= 4.5) break;
+                        lightness -= 0.05;
+                    }
+
+                    colors.push(rgbToHex(r, g, b));
+                }
+
+                return colors;
             }
         },
         watch: {
@@ -515,9 +887,17 @@
                                     this.totals[`team_${this.teams[i].id}`].is_locked = rating[`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${this.teams[i].id}`].is_locked
                                     total += value;
                                 }
-                                this.totals[`team_${this.teams[i].id}`].value = total;
+                                this.totals[`team_${this.teams[i].id}`].value = parseFloat(total.toFixed(2));
                                 this.totals[`team_${this.teams[i].id}`].loading = false;
                             }
+
+                            // send active event to websocket server
+                            this.websocketSend(
+                                '__active_event__',
+                                {
+                                    event_id: data.event?.id
+                                }
+                            );
                         },
                         error: (error) => {
                             alert(`ERROR ${error.status}: ${error.statusText}`);
@@ -537,7 +917,7 @@
                 }
 
                 // accumulate total adds into totals object
-                this.totals[`team_${team.id}`].value = total;
+                this.totals[`team_${team.id}`].value = parseFloat(total.toFixed(2));
             },
             saveRating(rating, percentage, team) {
                 this.totals[`team_${team.id}`].loading = true;
@@ -547,6 +927,11 @@
                     rating.value = 0;
                 else if (rating.value > percentage)
                     rating.value = percentage;
+
+                // round off rating
+                rating.value = parseFloat(parseFloat(rating.value).toFixed(2));
+
+                // handle rating keyup
                 this.handleRatingKeyUp(team);
 
                 // auto-save ratings
@@ -583,12 +968,40 @@
                     this.totals[`team_${team.id}`].value = this.maxRating;
                 }
 
+                // round off total
+                const enteredTotal = parseFloat(this.totals[`team_${team.id}`].value.toFixed(2));
+                this.totals[`team_${team.id}`].value = enteredTotal;
+
                 // total score divided and distributed based on criteria percentage
-                let ratings = [];
+                let ratings  = [];
+                let newTotal = 0;
                 for (let criterion of this.criteria) {
                     const rating = this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`];
-                    rating.value = this.totals[`team_${team.id}`].value * (criterion.percentage / this.totalCriteriaPercentage);
+                    rating.value = parseFloat((this.totals[`team_${team.id}`].value * (criterion.percentage / this.totalCriteriaPercentage)).toFixed(2));
                     ratings.push(rating);
+                    newTotal += rating.value;
+                }
+
+                // write back total for precision
+                if (newTotal !== enteredTotal) {
+                    const discrepancy = parseFloat((enteredTotal - newTotal).toFixed(2));
+                    let discrepancyRemainder = discrepancy;
+                    // distribute the discrepancy to criteria ratings that are not yet full
+                    for (let criterion of this.criteria) {
+                        const rating = this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`];
+                        rating.value += discrepancyRemainder;
+                        rating.value = parseFloat(rating.value.toFixed(2));
+                        if (rating.value > criterion.percentage) {
+                            discrepancyRemainder = parseFloat((rating.value - criterion.percentage).toFixed(2));
+                            rating.value = criterion.percentage;
+                        }
+                        else {
+                            discrepancyRemainder = 0;
+                        }
+                        if (discrepancyRemainder <= 0) {
+                            break;
+                        }
+                    }
                 }
 
                 // auto-save total score
@@ -611,7 +1024,7 @@
                     error: (error) => {
                         alert(`ERROR ${error.status}: ${error.statusText}`);
                     }
-                })
+                });
             },
             openSubmitDialog() {
                 // open dialog according to ratings
@@ -744,7 +1157,311 @@
                 this.coordinates.x = x;
                 this.coordinates.y = y;
                 this.move(x, y, null, false);
+
+                // send active team and column to websocket server
+                this.websocketSend(
+                    '__active_team_column__',
+                    {
+                        team_id: this.teams[y]?.id || 0,
+                        column : x
+                    }
+                );
+            },
+            handleToggleHelp(status) {
+                this.websocketSend('__call_for_help__', { status: status });
+            },
+            openTieBreaker() {
+                // extract ties from tieGroups
+                this.tieBreaker.tieGroups = {};
+                for (const rankKey in this.tieGroups) {
+                    if (this.tieGroups[rankKey].length > 1) {
+                        // prepare tieGroup
+                        this.tieBreaker.tieGroups[rankKey] = {
+                            fractionalR: parseFloat(rankKey.replace('rank_', '')),
+                            slots      : [],
+                            teams      : [],
+                            result     : []
+                        };
+                        // get slots competing for
+                        const start = this.tieBreaker.tieGroups[rankKey].fractionalR - (this.tieGroups[rankKey].length - 1) / 2;
+                        for (let i = 0; i < this.tieGroups[rankKey].length; i++) {
+                            this.tieBreaker.tieGroups[rankKey].slots.push(start + i);
+                        }
+                        // get teams involved
+                        for (let i = 0; i < this.tieGroups[rankKey].length; i++) {
+                            this.tieBreaker.tieGroups[rankKey].teams.push(this.teamsAssoc[this.tieGroups[rankKey][i]]);
+                        }
+                    }
+                }
+
+                // open tie breaker modal
+                this.tieBreaker.loading = false;
+                this.tieBreaker.opened  = true;
+            },
+            toRightTieBreaker(tieGroupKey, index) {
+                const tieGroup = this.tieBreaker.tieGroups[tieGroupKey];
+                if (tieGroup) {
+                    if (tieGroup.teams[index]) {
+                        const element = { ...tieGroup.teams[index] };
+                        tieGroup.teams.splice(index, 1);
+                        tieGroup.result.push(element);
+                    }
+                }
+            },
+            toLeftTieBreaker(tieGroupKey, index) {
+                const tieGroup = this.tieBreaker.tieGroups[tieGroupKey];
+                if (tieGroup) {
+                    if (tieGroup.result[index]) {
+                        const element = { ...tieGroup.result[index] };
+                        tieGroup.result.splice(index, 1);
+                        tieGroup.teams.push(element);
+                    }
+                }
+            },
+            sortUpTieBreaker(tieGroupKey, index) {
+                const tieGroup = this.tieBreaker.tieGroups[tieGroupKey];
+                if (tieGroup) {
+                    if (index > 0) {
+                        const temp = { ...tieGroup.result[index] };
+                        tieGroup.result[index] = { ...tieGroup.result[index - 1] };
+                        tieGroup.result[index - 1] = temp;
+                    }
+                }
+            },
+            sortDownBreaker(tieGroupKey, index) {
+                const tieGroup = this.tieBreaker.tieGroups[tieGroupKey];
+                if (tieGroup) {
+                    if (index < (tieGroup.result.length - 1)) {
+                        const temp = { ...tieGroup.result[index] };
+                        tieGroup.result[index] = { ...tieGroup.result[index + 1] };
+                        tieGroup.result[index + 1] = temp;
+                    }
+                }
+            },
+            closeTieBreaker() {
+                this.tieBreaker.opened = false;
+            },
+            applyTieBreaker() {
+                if (this.tieBreaker.loading) {
+                    return;
+                }
+                const adjustedRatings = [];
+                this.tieBreaker.loading = true;
+                for (const rankKey in this.tieBreaker.tieGroups) {
+                    const tieGroup = this.tieBreaker.tieGroups[rankKey];
+                    if (tieGroup.result.length > 0) {
+                        // determine if all tie teams are involved
+                        const isAllTiesInvolved = tieGroup.result.length === tieGroup.slots.length;
+
+                        // determine the total rating that the group is tie with
+                        const tieTotal = this.totals[`team_${tieGroup.result[0].id}`].value;
+
+                        // determine algorithm (default is increment)
+                        let increment = true;
+                        if (tieTotal >= this.totalCriteriaPercentage) {
+                            increment = false;
+                        }
+
+                        // algorithm delta
+                        const delta = 0.01;
+
+                        // adjust team totals so that it's still within criteria percentage
+                        let adjustment = 0;
+                        if (increment) {
+                            const lastTotal = (tieTotal + (delta * (isAllTiesInvolved ? (tieGroup.result.length - 1) : tieGroup.result.length)));
+                            if (lastTotal > this.totalCriteriaPercentage) {
+                                adjustment = parseFloat((lastTotal - this.totalCriteriaPercentage).toFixed(2));
+                            }
+                        }
+                        else {
+                            const lastTotal = (tieTotal - (delta * (isAllTiesInvolved ? (tieGroup.result.length - 1) : tieGroup.result.length)));
+                            if (lastTotal < 0) {
+                                adjustment = parseFloat((lastTotal * -1).toFixed(2));
+                            }
+                        }
+                        if (adjustment > 0) {
+                            adjustment = parseFloat(adjustment.toFixed(2));
+                            for (let i = 0; i < tieGroup.result.length; i++) {
+                                const team = tieGroup.result[i];
+                                let adjustmentRemainder = adjustment;
+                                for (let j = 0; j < this.criteria.length; j++) {
+                                    const criterion = this.criteria[j];
+                                    const rating = this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`];
+                                    if (rating) {
+                                        if (increment) {
+                                            let adjustedRatingValue = rating.value - adjustmentRemainder;
+                                            if (adjustedRatingValue < 0) {
+                                                adjustmentRemainder = adjustedRatingValue * -1;
+                                                adjustedRatingValue = 0;
+                                            }
+                                            else {
+                                                adjustmentRemainder = 0;
+                                            }
+                                            this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value = adjustedRatingValue;
+                                        }
+                                        else {
+                                            const adjustedRatingValue = rating.value + adjustmentRemainder;
+                                            if (adjustedRatingValue > criterion.percentage) {
+                                                adjustmentRemainder = adjustedRatingValue - criterion.percentage;
+                                            }
+                                            else {
+                                                adjustmentRemainder = 0;
+                                            }
+                                            this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value = adjustedRatingValue;
+                                        }
+                                    }
+                                    if (adjustmentRemainder <= 0) {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        // apply delta
+                        if (increment) {
+                            let activeDelta = delta * (isAllTiesInvolved ? (tieGroup.result.length - 1) : tieGroup.result.length);
+                            for (let i = 0; i < tieGroup.result.length; i++) {
+                                const team = tieGroup.result[i];
+                                let activeDeltaRemainder = activeDelta;
+                                for (let j = 0; j < this.criteria.length; j++) {
+                                    const criterion = this.criteria[j];
+                                    const rating = this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`];
+                                    if (rating) {
+                                        let adjustedRatingValue = parseFloat((rating.value + activeDeltaRemainder).toFixed(2));
+                                        if (adjustedRatingValue > criterion.percentage) {
+                                            adjustedRatingValue = criterion.percentage;
+                                            activeDeltaRemainder = adjustedRatingValue - criterion.percentage;
+                                        }
+                                        else {
+                                            activeDeltaRemainder = 0;
+                                        }
+                                        this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value = adjustedRatingValue;
+                                    }
+
+                                    // push rating to adjustedRatings
+                                    adjustedRatings.push(this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`]);
+
+                                    if (activeDeltaRemainder <= 0) {
+                                        break;
+                                    }
+                                }
+
+                                // update frontend ratings
+                                this.handleRatingKeyUp(team);
+                                this.totals[`team_${team.id}`].loading = true;
+
+                                // next delta
+                                activeDelta -= delta;
+                            }
+                        }
+                        else {
+                            let activeDelta = delta;
+                            for (let i = 0; i < tieGroup.result.length; i++) {
+                                const team = tieGroup.result[i];
+                                let activeDeltaRemainder = activeDelta;
+                                for (let j = 0; j < this.criteria.length; j++) {
+                                    const criterion = this.criteria[j];
+                                    const rating = this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`];
+                                    if (rating) {
+                                        let adjustedRatingValue = parseFloat((rating.value - activeDeltaRemainder).toFixed(2));
+                                        if (adjustedRatingValue < 0) {
+                                            adjustedRatingValue  = 0;
+                                            activeDeltaRemainder = adjustedRatingValue * -1;
+                                        }
+                                        else {
+                                            activeDeltaRemainder = 0;
+                                        }
+                                        this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`].value = adjustedRatingValue;
+                                    }
+
+                                    // push rating to adjustedRatings
+                                    adjustedRatings.push(this.ratings[`${this.event.slug}_${team.id}`][`${this.$store.getters['auth/getUser'].id}_${criterion.id}_${team.id}`]);
+
+                                    if (activeDeltaRemainder <= 0) {
+                                        break;
+                                    }
+                                }
+
+                                // update frontend ratings
+                                this.handleRatingKeyUp(team);
+                                this.totals[`team_${team.id}`].loading = true;
+
+                                // next delta
+                                activeDelta += delta;
+                            }
+                        }
+                    }
+                }
+
+                // save adjusted ratings
+                if (adjustedRatings.length > 0) {
+                    $.ajax({
+                        url: `${this.$store.getters.appURL}/${this.$store.getters['auth/getUser'].userType}.php`,
+                        type: 'POST',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        data: {
+                            ratings: adjustedRatings
+                        },
+                        success: (data, textStatus, jqXHR) => {
+                            for (const rankKey in this.tieBreaker.tieGroups) {
+                                const tieGroup = this.tieBreaker.tieGroups[rankKey];
+                                for (let i = 0; i < tieGroup.result.length; i++) {
+                                    const team = tieGroup.result[i];
+                                    if (this.totals[`team_${team.id}`].loading) {
+                                        setTimeout(() => {
+                                            this.totals[`team_${team.id}`].loading = false;
+                                        }, 1000);
+                                    }
+                                }
+                            }
+                            this.tieBreaker.loading = false;
+                        },
+                        error: (error) => {
+                            this.tieBreaker.loading = false;
+                            alert(`ERROR ${error.status}: ${error.statusText}`);
+                        }
+                    });
+                }
+
+                this.closeTieBreaker();
+            },
+            handleSignOut() {
+                this.websocketSend('__sign_out__');
+            },
+            websocketSend(action, payload) {
+                if (this.ws !== null && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify({
+                        competition: this.competition,
+                        entity     : 'judge',
+                        id         : this.$store.getters['auth/getUser']?.id,
+                        action     : action,
+                        payload    : payload
+                    }));
+                }
             }
+        },
+        created() {
+            // initialize websocket connection
+            this.competition = import.meta.env.BASE_URL.replaceAll('/', '');
+            console.log(`${this.$store.getters['websocketUrl']}?competition=${this.competition}&entity=judge&id=${this.$store.getters['auth/getUser']?.id}`);
+            this.ws = new WebSocket(`${this.$store.getters['websocketUrl']}?competition=${this.competition}&entity=judge&id=${this.$store.getters['auth/getUser']?.id}`);
+
+            // handle websocket open
+            this.ws.onopen = () => {
+
+            };
+
+            // handle websocket message
+            this.ws.onmessage = (e) => {
+
+            };
+
+            // handle websocket close
+            this.ws.onclose = () => {
+
+            };
         },
         mounted() {
             this.$emit('startPing');
@@ -752,6 +1469,13 @@
     }
 </script>
 
+<style>
+    .transparent-tooltip {
+        background-color: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+</style>
 
 <style scoped>
     tbody td, th {
