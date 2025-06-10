@@ -74,6 +74,7 @@ $routes = [
     [ "name" => "Eliminations"          , "route" => "crud/eliminations"            ],
     [ "name" => "Arrangements"          , "route" => "crud/orders"                  ],
     [ "name" => "Titles"                , "route" => "crud/titles"                  ],
+    [ "name" => "Rating Sheets"         , "route" => "papers/rating-sheets"         ],
     [ "name" => "Best in Swimsuit"      , "route" => "results/best-in-swimsuit"     ],
     [ "name" => "Best in Evening Gown"  , "route" => "results/best-in-evening-gown" ],
     [ "name" => "Bullet Train Dashboard", "route" => "dashboard"                    ]

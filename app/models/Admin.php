@@ -109,10 +109,11 @@ class Admin extends User
 
         // initialize $result
         $result = [
-            'technicals' => [],
-            'judges'     => [],
-            'teams'      => [],
-            'winners'    => []
+            'technicals'      => [],
+            'judges'          => [],
+            'teams'           => [],
+            'winners'         => [],
+            'teams_with_ties' => []
         ];
 
         // get all teams
@@ -276,6 +277,15 @@ class Admin extends User
             if(!isset($rank_group[$key_rank]))
                 $rank_group[$key_rank] = [];
             $rank_group[$key_rank][] = $key;
+        }
+
+        // get teams with ties
+        foreach($rank_group as $key_rank => $team_keys) {
+            if (sizeof($team_keys) > 1) {
+                foreach ($team_keys as $team_key) {
+                    $result['teams_with_ties'][] = $team_key;
+                }
+            }
         }
 
         // get initial fractional rank

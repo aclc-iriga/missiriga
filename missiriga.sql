@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 10, 2025 at 11:16 AM
+-- Generation Time: Jun 10, 2025 at 08:30 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -105,7 +105,7 @@ CREATE TABLE `competitions` (
 --
 
 INSERT INTO `competitions` (`id`, `slug`, `title`, `created_at`, `updated_at`) VALUES
-(1, 'missiriga-2024', 'Miss Iriga 2024', '2023-04-06 13:24:04', '2024-06-10 21:23:20');
+(1, 'missiriga-2025', 'Miss Iriga 2025', '2023-04-06 13:24:04', '2025-06-10 18:09:35');
 
 -- --------------------------------------------------------
 
@@ -194,8 +194,8 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `category_id`, `slug`, `title`, `created_at`, `updated_at`) VALUES
-(1, 1, 'swimsuit', 'Swimsuit (Pageant Night)', '2024-06-11 07:24:01', '2024-06-11 07:28:35'),
-(2, 1, 'evening-gown', 'Evening Gown (Pageant Night)', '2024-06-11 07:24:13', '2024-06-11 07:28:36'),
+(1, 1, 'swimsuit', 'Swimsuit', '2024-06-11 07:24:01', '2025-06-10 18:29:54'),
+(2, 1, 'evening-gown', 'Evening Gown', '2024-06-11 07:24:13', '2025-06-10 18:29:47'),
 (3, 1, 'final-qa', 'Final Q&A', '2024-06-10 21:33:57', '2024-06-11 07:28:38'),
 (4, 2, 'pre-swimsuit', 'Swimsuit (Pre-Pageant)', '2024-06-11 07:30:40', '2024-06-11 07:31:15'),
 (5, 2, 'pre-evening-gown', 'Evening Gown (Pre-Pageant)', '2024-06-11 07:30:58', '2024-06-11 07:31:21');
@@ -368,23 +368,26 @@ CREATE TABLE `teams` (
 --
 
 INSERT INTO `teams` (`id`, `number`, `name`, `location`, `avatar`, `competing_for`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Janna Eloisa Lanuzga', 'Nabua, Camarines Sur', '01.jpg', 'Miss Rinconada', '2024-06-10 21:26:11', '2025-06-10 09:14:11'),
-(2, 2, 'Jodelyn Mendoza', 'Nabua, Camarines Sur', '02.jpg', 'Miss Rinconada', '2024-06-10 21:26:31', '2025-06-10 09:14:16'),
-(3, 3, 'Maria Shelley Sabularse', 'Baao, Camarines Sur', '03.jpg', 'Miss Rinconada', '2024-06-10 21:26:54', '2025-06-10 09:14:21'),
-(4, 4, 'Mary Claire Chavez', 'Buhi, Camarines Sur', '04.jpg', 'Miss Rinconada', '2024-06-10 21:27:15', '2025-06-10 09:14:26'),
-(5, 5, 'Nicole Joycean Peñaserada', 'Buhi, Camarines Sur', '05.jpg', 'Miss Rinconada', '2024-06-10 21:28:09', '2025-06-10 09:14:29'),
-(6, 6, 'Lauriane Magistrado', 'Iriga City', '06.jpg', 'Miss Iriga', '2024-06-10 21:28:33', '2025-06-10 09:14:33'),
-(7, 7, 'Jessabel Bearis', 'Iriga City', '07.jpg', 'Miss Iriga', '2024-06-10 21:28:50', '2025-06-10 09:14:37'),
-(8, 8, 'Lisa Mae General', 'Iriga City', '08.jpg', 'Miss Iriga', '2024-06-10 21:29:05', '2025-06-10 09:14:40'),
-(9, 9, 'Bettina Pauline Francia', 'Iriga City', '09.jpg', 'Miss Iriga', '2024-06-10 21:29:23', '2025-06-10 09:14:44'),
-(10, 10, 'Katrina Claudia Jamin', 'Iriga City', '10.jpg', 'Miss Iriga', '2024-06-10 21:29:41', '2025-06-10 09:14:48'),
-(11, 11, 'Sherrie Mae Romaraog', 'Iriga City', '11.jpg', 'Miss Iriga', '2024-06-10 21:29:58', '2025-06-10 09:14:52'),
-(12, 12, 'Mary Dine Monge', 'Iriga City', '12.jpg', 'Miss Iriga', '2024-06-10 21:30:15', '2025-06-10 09:14:56'),
-(13, 13, 'Angelica Maximo', 'Polangui, Albay', '13.jpg', 'Miss Bicol Tourism', '2024-06-10 21:30:34', '2025-06-10 09:15:02'),
-(14, 14, 'Cherry Love Jebulan', 'Sto. Domingo, Albay', '14.jpg', 'Miss Bicol Tourism', '2024-06-10 21:30:58', '2025-06-10 09:15:08'),
-(15, 15, 'Dara Sofia Cartujano', 'Naga City, Camarines Sur', '15.jpg', 'Miss Bicol Tourism', '2024-06-10 21:31:22', '2025-06-10 09:15:12'),
-(16, 16, 'Eaula Marie Balcueva', 'Presentacion, Camarines Sur', '16.jpg', 'Miss Bicol Tourism', '2024-06-10 21:32:04', '2025-06-10 09:15:19'),
-(17, 17, 'Liezl Anne Iñigo', 'Camaligan, Camarines Sur', '17.jpg', 'Miss Bicol Tourism', '2024-06-10 21:32:34', '2025-06-10 09:15:25');
+(1, 1, 'CHRISTINE B. ORVILLA', 'Minalabac, Cam. Sur', '01.jpg', 'Miss Bicol Tourism', '2024-06-10 21:26:11', '2025-06-10 17:59:08'),
+(2, 2, 'JADE NICA B. LABIOS', 'San Francisco, Iriga City', '02.jpg', 'Miss Iriga', '2024-06-10 21:26:31', '2025-06-10 17:59:20'),
+(3, 3, 'CHRISTINE MAY B. ALOC', 'Daet, Cam. Norte', '03.jpg', 'Miss Bicol Tourism', '2024-06-10 21:26:54', '2025-06-10 17:59:32'),
+(4, 4, 'MARIA SHELLY SABULARSE', 'San Antonio, Iriga City', '04.jpg', 'Miss Iriga', '2024-06-10 21:27:15', '2025-06-10 17:59:47'),
+(5, 5, 'RICA JANE PEÑALBA', 'Sorsogon', '05.jpg', 'Miss Bicol Tourism', '2024-06-10 21:28:09', '2025-06-10 18:00:09'),
+(6, 6, 'AMABEL B. IBASCO', 'Daet, Cam. Norte', '06.jpg', 'Miss Bicol Tourism', '2024-06-10 21:28:33', '2025-06-10 18:00:27'),
+(7, 7, 'ALEXANDRA KRISHNA M. ORIÑO', 'Naga City', '07.jpg', 'Miss Bicol Tourism', '2024-06-10 21:28:50', '2025-06-10 18:00:45'),
+(8, 8, 'EURICKA LYN N. MORAÑA', 'Nabua, Cam. Sur', '08.jpg', 'Miss Rinconada', '2024-06-10 21:29:05', '2025-06-10 18:01:00'),
+(9, 9, 'BETTINA PAULINE L. FRANCIA', 'San Nicolas, Iriga City', '09.jpg', 'Miss Iriga', '2024-06-10 21:29:23', '2025-06-10 18:01:13'),
+(10, 10, 'AUDREY ALEXANDRA B. VILLA', 'Baao, Cam. Sur', '10.jpg', 'Miss Rinconada', '2024-06-10 21:29:41', '2025-06-10 18:06:06'),
+(11, 11, 'MARAE ALAINE B. CUSTODIO', 'Bombon, Cam. Sur', '11.jpg', 'Miss Bicol Tourism', '2024-06-10 21:29:58', '2025-06-10 18:02:06'),
+(12, 12, 'ANGELICA V. CENTENO', 'Baao, Cam. Sur', '12.jpg', 'Miss Rinconada', '2024-06-10 21:30:15', '2025-06-10 18:02:19'),
+(13, 13, 'RANI LACHMI DADO', 'Legazpi, Albay', '13.jpg', 'Miss Bicol Tourism', '2024-06-10 21:30:34', '2025-06-10 17:55:38'),
+(14, 14, 'MICKHA ELLA S. COMODA', 'Lagonoy, Cam. Sur', '14.jpg', 'Miss Bicol Tourism', '2024-06-10 21:30:58', '2025-06-10 18:02:39'),
+(15, 15, 'MARY DINE MONGE', 'Sto. Domingo, Iriga City', '15.jpg', 'Miss Iriga', '2024-06-10 21:31:22', '2025-06-10 18:02:50'),
+(16, 16, 'KASSANDRA A. SETON', 'Siruma, Cam. Sur', '16.jpg', 'Miss Bicol Tourism', '2024-06-10 21:32:04', '2025-06-10 18:02:56'),
+(17, 17, 'XENA ELISA C. VALDEMORO', 'Del Rosario Banao, Iriga City', '17.jpg', 'Miss Iriga', '2024-06-10 21:32:34', '2025-06-10 18:03:47'),
+(18, 18, 'MIEN MIE EGIPTO', 'San Agustin, Iriga City', '18.jpg', 'Miss Iriga', '2025-06-10 17:54:48', '2025-06-10 18:03:52'),
+(19, 19, 'MA. KASSANDRA S. COMPLETO', 'Bula, Cam. Sur', '19.jpg', 'Miss Rinconada', '2025-06-10 17:54:48', '2025-06-10 18:04:04'),
+(20, 20, 'BARBIE ANNE DE LOS SANTOS', 'San Miguel, Iriga City', '20.jpg', 'Miss Iriga', '2025-06-10 17:54:48', '2025-06-10 18:04:17');
 
 -- --------------------------------------------------------
 
@@ -449,9 +452,9 @@ CREATE TABLE `titles` (
 --
 
 INSERT INTO `titles` (`id`, `event_id`, `rank`, `title`, `created_at`, `updated_at`) VALUES
-(1, 3, 1, 'MISS IRIGA 2024', '2024-06-11 07:43:42', '2024-06-11 08:09:12'),
-(2, 3, 2, 'MISS RINCONADA 2024', '2024-06-11 07:43:42', '2024-06-11 08:09:14'),
-(3, 3, 3, 'MISS BICOL TOURISM 2024', '2024-06-11 07:43:42', '2024-06-11 08:09:16'),
+(1, 3, 1, 'MISS IRIGA 2025', '2024-06-11 07:43:42', '2025-06-10 18:12:51'),
+(2, 3, 2, 'MISS RINCONADA 2025', '2024-06-11 07:43:42', '2025-06-10 18:12:56'),
+(3, 3, 3, 'MISS BICOL TOURISM 2025', '2024-06-11 07:43:42', '2025-06-10 18:12:59'),
 (4, 3, 4, '1ST RUNNER UP', '2024-06-11 07:43:42', '2024-06-11 08:09:17'),
 (5, 3, 5, '2ND RUNNER UP', '2024-06-11 07:43:42', '2024-06-11 08:09:19');
 
@@ -684,7 +687,7 @@ ALTER TABLE `ratings`
 -- AUTO_INCREMENT for table `teams`
 --
 ALTER TABLE `teams`
-  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `technicals`

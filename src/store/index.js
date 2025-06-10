@@ -12,7 +12,7 @@ export default createStore({
 
     state: {
         app: {
-            title: 'Miss Iriga 2024',
+            title: 'Miss Iriga 2025',
             org: 'ACLC College Iriga',
             backendDir: 'app',
             sideNav: false
@@ -21,7 +21,7 @@ export default createStore({
             height: 0
         },
         rating: {
-            min: 50,
+            min: 60,
             max: 100
         },
         deduction: {

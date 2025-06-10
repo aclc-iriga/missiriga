@@ -87,16 +87,17 @@
                                 <div>
                                     Judge {{ judge.number }}<span v-if="judge.is_chairman == 1">*</span>
                                 </div>
+                                <div class="text-blue-darken-2">
+                                    <small>Rank</small>
+                                </div>
                                 <div
                                     :class="{
                                         'text-dark-darken-1': judge.is_chairman == 0,
                                         'text-red-darken-4': judge.is_chairman == 1
                                     }"
+                                    style="margin-top: -10px;"
                                 >
-                                    <small>Total</small>
-                                </div>
-                                <div class="text-blue-darken-2" style="margin-top: -10px;">
-                                    <small>Rank</small>
+                                    <small>Rating</small>
                                 </div>
                             </div>
 
@@ -111,9 +112,6 @@
                                 </v-chip>
                             </div>
                         </th>
-                        <th class="text-center text-uppercase font-weight-bold text-green-darken-4 py-3">
-                            Total<br>Avg.
-                        </th>
                         <th class="text-center text-uppercase font-weight-bold text-blue-darken-4 py-3">
                             Rank<br>Total
                         </th>
@@ -122,6 +120,9 @@
                         </th>
                         <th class="text-center text-uppercase font-weight-bold text-grey-darken-1 py-3">
                             Initial<br>Rank
+                        </th>
+                        <th class="text-center text-uppercase font-weight-bold text-green-darken-4 py-3">
+                            Rating<br>Avg.
                         </th>
                         <th class="text-center text-uppercase font-weight-bold text-grey-darken-4 py-3">
                             Final<br>Rank
@@ -148,13 +149,15 @@
                                 <v-img
                                     cover
                                     :src="`${$store.getters.appURL}/crud/uploads/${team.avatar}`"
+                                    transition="0"
+                                    eager
                                 />
                             </v-avatar>
                         </td>
                         <td :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }">
                             <p class="ma-0 text-subtitle-2 text-uppercase font-weight-bold" style="line-height: 1.2">{{ team.name }}</p>
                             <p class="mt-1 mb-0" style="line-height: 1"><small>{{ team.location }}</small></p>
-                            <p class="mt-1 mb-0 opacity-50" style="line-height: 1; font-size: 13px"><small>for <b>{{ team.competing_for }}</b></small></p>
+                            <p class="mt-1 mb-0 opacity-50" style="line-height: 1; font-size: 16px"><small>for <b>{{ team.competing_for }}</b></small></p>
                         </td>
                         <td
                             v-for="(technical, technicalKey, technicalIndex) in technicals"
@@ -180,17 +183,6 @@
                             }"
                         >
                             <div
-                                :class="{
-                                    'text-dark-darken-1': judge.is_chairman == 0,
-                                    'text-red-darken-3': judge.is_chairman == 1
-                                }"
-                            >
-                                <span :class="{ blurred: !team.ratings.inputs[`judge_${judge.id}`].final.is_locked && team.ratings.inputs[`judge_${judge.id}`].final.deducted <= 0 }">
-                                    {{ team.ratings.inputs[`judge_${judge.id}`].final.deducted.toFixed(2) }}
-                                </span>
-                            </div>
-
-                            <div
                                 class="text-right font-weight-bold text-blue-darken-2"
                                 :class="{
                                     'bg-grey-lighten-3' : !team.ratings.inputs[`judge_${judge.id}`].final.is_locked,
@@ -202,36 +194,47 @@
                                     {{ team.ratings.inputs[`judge_${judge.id}`].rank.fractional.toFixed(2) }}
                                 </span>
                             </div>
-                        </td>
-                        <td
-                            class="text-right font-weight-bold text-green-darken-4"
-                            :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }"
-                        >
-                            <span class="pr-2">{{ team.ratings.average.toFixed(2) }}</span>
+
+                            <div
+                                :class="{
+                                    'text-dark-darken-1': judge.is_chairman == 0,
+                                    'text-red-darken-3': judge.is_chairman == 1
+                                }"
+                            >
+                                <span :class="{ blurred: !team.ratings.inputs[`judge_${judge.id}`].final.is_locked && team.ratings.inputs[`judge_${judge.id}`].final.deducted <= 0 }">
+                                    {{ team.ratings.inputs[`judge_${judge.id}`].final.deducted.toFixed(2) }}
+                                </span>
+                            </div>
                         </td>
                         <td
                             class="text-right font-weight-bold text-blue-darken-4"
                             :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }"
                         >
-                            <span class="pr-2">{{ team.rank.total.fractional.toFixed(2) }}</span>
+                            <span>{{ team.rank.total.fractional.toFixed(2) }}</span>
                         </td>
                         <td
                             class="text-right font-weight-bold text-blue-darken-4"
                             :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }"
                         >
-                            <span class="pr-2">{{ team.rank.average.fractional.toFixed(2) }}</span>
+                            <span>{{ team.rank.average.fractional.toFixed(2) }}</span>
                         </td>
                         <td
                             class="text-right font-weight-bold text-grey-darken-1"
                             :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }"
                         >
-                            <span class="pr-2">{{ team.rank.initial.fractional.toFixed(2) }}</span>
+                            <span>{{ team.rank.initial.fractional.toFixed(2) }}</span>
                         </td>
                         <td
-                            class="text-right font-weight-bold text-h6"
+                            class="text-right font-weight-bold text-green-darken-4"
                             :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }"
                         >
-                            <span class="pr-3">{{ team.rank.final.fractional }}</span>
+                            <span :style="{ 'opacity': (this.teams_with_ties.includes(teamKey)) ? 1 : 0.38 }">{{ team.ratings.average.toFixed(2) }}</span>
+                        </td>
+                        <td
+                            class="text-center font-weight-bold text-h6"
+                            :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }"
+                        >
+                            <span>{{ team.rank.final.fractional }}</span>
                         </td>
                         <td
                             class="text-center font-weight-bold text-body-1"
@@ -375,11 +378,12 @@
 		},
         data() {
             return {
-                event     : null,
-                teams     : [],
-                judges    : [],
-                technicals: [],
-                winners   : {},
+                event          : null,
+                teams          : [],
+                judges         : [],
+                technicals     : [],
+                winners        : {},
+                teams_with_ties: [],
 
                 timer: null,
                 openUnlockDialog: false,
@@ -448,11 +452,12 @@
                     if (this.timer)
                         clearTimeout(this.timer);
 
-                    this.event      = null;
-                    this.teams      = [];
-                    this.judges     = [];
-                    this.technicals = [];
-                    this.winners    = {};
+                    this.event           = null;
+                    this.teams           = [];
+                    this.judges          = [];
+                    this.technicals      = [];
+                    this.winners         = {};
+                    this.teams_with_ties = [];
                     this.tabulate();
                 }
             }
@@ -472,11 +477,12 @@
                         },
                         success: (data) => {
                             data = JSON.parse(data);
-                            this.event      = data.event;
-                            this.teams      = data.results.teams;
-                            this.judges     = data.results.judges;
-                            this.technicals = data.results.technicals;
-                            this.winners    = data.results.winners;
+                            this.event           = data.event;
+                            this.teams           = data.results.teams;
+                            this.judges          = data.results.judges;
+                            this.technicals      = data.results.technicals;
+                            this.winners         = data.results.winners;
+                            this.teams_with_ties = data.results.teams_with_ties;
 
                             // request again
                             if(data.event.slug === this.$route.params.eventSlug) {
