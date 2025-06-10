@@ -74,7 +74,7 @@
                             scrollable
                         >
                             <template #activator="{ props }">
-                                <v-btn @click="openTieBreaker" v-bind="props" variant="outlined" color="warning" density="compact" :disabled="tiesTotal <= 0"
+                                <v-btn @click="openTieBreaker" v-bind="props" variant="outlined" color="warning" density="compact" :disabled="tiesTotal <= 0 || scoreSheetDisabled"
                                     style=" white-space: normal; overflow: visible; height: auto; padding-top: 8px; padding-bottom: 8px;"
                                 >
                                     <span class="d-flex flex-column"><span><v-icon>mdi-open-in-new</v-icon> Tie</span><span>Breaker</span>
@@ -1242,7 +1242,7 @@
                 this.tieBreaker.opened = false;
             },
             applyTieBreaker() {
-                if (this.tieBreaker.loading) {
+                if (this.tieBreaker.loading || this.scoreSheetDisabled) {
                     return;
                 }
                 const adjustedRatings = [];
