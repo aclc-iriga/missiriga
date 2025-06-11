@@ -45,7 +45,7 @@
                         {{ team.number }}
                     </td>
                     <td style="width: 72px;">
-                        <v-avatar size="72">
+                        <v-avatar size="72" :style="{ 'opacity' : (coordinates.y == teamIndex && !scoreSheetDisabled) ? '1' : '0.9' }">
                             <v-img
                                 cover
                                 :src="`${$store.getters.appURL}/crud/uploads/${team.avatar}`"

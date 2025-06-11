@@ -251,7 +251,7 @@
                         {{ team.number }}
                     </td>
                     <td style="width: 72px;">
-                        <v-avatar size="72" class="avatar" style="cursor: pointer;">
+                        <v-avatar size="72" class="avatar" style="cursor: pointer;" :style="{ 'opacity' : (coordinates.y == teamIndex && !scoreSheetDisabled) ? '1' : '0.9' }">
                             <v-img class="avatar-hover-effect" cover :src="`${$store.getters.appURL}/crud/uploads/${team.avatar}`" transition="none" eager>
                                 <v-tooltip activator="parent" location="left" align="center">
                                     <v-card
