@@ -71,7 +71,7 @@
 <!-------------------------------------------------------->
 
     <div class="row">
-        <div class="col-12 col-sm-12 col-md-5">
+        <div class="col-12 col-sm-12 col-md-5 col-lg-4">
             <!-- Judges Table -->
             <judges-table
                 :judges="judges"
@@ -85,7 +85,7 @@
             </judges-table>
         </div>
 
-        <div class="col-12 col-sm-12 col-md-7">
+        <div class="col-12 col-sm-12 col-md-7 col-lg-8">
             <template
                 v-for="([eventKey, event], eventIndex) in Object.entries(events)"
                 :key="event.id"

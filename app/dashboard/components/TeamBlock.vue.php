@@ -13,7 +13,7 @@
             <h5 class="m-0 p-0" v-if="!noNumber">#{{ team.number }}</h5>
             <p class="m-0 p-0 fw-bold opacity-75" style="font-size: 0.8rem;">{{ team.name }}</p>
             <p class="m-0 p-0 fw-bold opacity-75" style="font-size: 0.7rem;">{{ team.location }}</p>
-            <p class="m-0 p-0" style="font-size: 0.7rem;">{{ team.meta }}</p>
+            <p class="m-0 p-0 opacity-75" style="font-size: 0.7rem;">for <b>{{ team.competing_for }}</b></p>
         </div>
     </div>
 

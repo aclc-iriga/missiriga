@@ -15,13 +15,13 @@
                     v-for="(criterion, criterionIndex) in event.criteria"
                     :key="criterion.id"
                     class="text-center"
-                    :style="{ 'width': `${65/(event.criteria.length + 1)}%` }"
+                    :style="{ 'width': `${73/(event.criteria.length + 1)}%` }"
                 >
                     {{ criterion.title }}
                 </th>
 
                 <!-- Total Title -->
-                <th class="text-center" :style="{ 'width': `${65/(event.criteria.length + 1)}%` }">TOTAL</th>
+                <th class="text-center" :style="{ 'width': `${73/(event.criteria.length + 1)}%` }">TOTAL</th>
             </tr>
 
             <!-- thead row 2 -->
@@ -51,7 +51,7 @@
                 </td>
 
                 <!-- Candidate -->
-                <td>
+                <td class="py-3">
                     <team-block :team="team" avatar-size="54" no-number></team-block>
                 </td>
 
@@ -60,7 +60,7 @@
                     v-for="(criterion, criterionIndex) in event.criteria"
                     :key="criterion.id"
                 >
-                    <div class="d-flex justify-content-center align-items-center gap-2">
+                    <div class="d-flex justify-content-center align-items-center flex-wrap gap-2">
                         <template v-if="team.judgeData.length > 0">
                             <div v-for="(judgeDatum, judgeDatumIndex) in team.judgeData">
                                 <judge-avatar

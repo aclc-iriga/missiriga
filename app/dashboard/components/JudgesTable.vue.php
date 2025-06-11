@@ -1,13 +1,12 @@
 <template id="judges-table"><div style="display: contents;">
 <!-------------------------------------------------------->
 
-    <table class="table sticky-top">
+    <table class="table sticky-top table-bordered">
         <thead class="bg-white">
             <tr>
-                <th style="width: 20%" colspan="2" class="text-center">JUDGES</th>
-                <th style="width: 15%" class="text-center">EVENT</th>
-                <th style="width: 40%" class="text-center">CANDIDATE</th>
-                <th style="width: 35%" class="text-center">CRITERIA</th>
+                <th style="width: 30%" class="text-center">JUDGES</th>
+                <th style="width: 45%" class="text-center">CANDIDATE</th>
+                <th style="width: 25%" class="text-center">EVENT</th>
             </tr>
         </thead>
 
@@ -17,44 +16,34 @@
                 :key="judge.id"
                 :class="{ 'table-danger': !judge.online, 'help-blink': judge.helpStatus }"
             >
-                <td style="height: 150px;" class="text-center" :class="!judge.helpStatus ? `text-${judge.statusClass}` : ''">
-                    <h4 class="m-0 p-0">{{ judge.number }}</h4>
-                </td>
-                <td>
-                    <div style="margin-bottom: 5px;">{{ judge.name }}</div>
-                    <p class="m-0 p-0 fw-bold opacity-75" :class="!judge.helpStatus ? `text-${judge.statusClass}` : ''" style="font-size: 0.8rem;">{{ judge.statusText }}</p>
-                </td>
-                <td class="text-center">
-                    <span v-if="judge.online && judge.activeEvent" class="fw-bold opacity-75 text-uppercase">
-                        {{ judge.activeEvent.title }}
-                    </span>
+                <td class="text-center" style="height: 115px;">
+                    <div style="margin-bottom: 8px;">
+                        <h6 class="m-0" style="font-size: 0.9rem;">JUDGE #{{ judge.number }}</h6>
+                        <p class="m-0" style="line-height: 1; font-size: 0.9rem; opacity: 0.8; margin-top: 4px !important;">{{ judge.name }}</p>
+                    </div>
+                    <p class="m-0 p-0 fw-bold opacity-75" :class="!judge.helpStatus ? `text-${judge.statusClass}` : ''" style="font-size: 0.7rem;">{{ judge.statusText }}</p>
                 </td>
                 <td>
                     <team-block v-if="judge.online && judge.activeTeam" :team="judge.activeTeam"></team-block>
                 </td>
-                <td>
-                    <template v-if="judge.online && judge.activeTeam && judge.activeEvent">
-                        <div v-if="judge.activeEvent.criteria[judge.activeColumn]">
-                            <p class="m-0 p-0" style="font-size: 0.8rem;">
-                                Field #{{ judge.activeColumn + 1 }}:
-                            </p>
-                            <p class="m-0 p-0">
-                                {{ judge.activeEvent.criteria[judge.activeColumn].title }}
-                            </p>
-                            <p class="m-0 p-0">
-                                {{ judge.activeEvent.criteria[judge.activeColumn].percentage }}%
-                            </p>
-                        </div>
-                        <div v-else-if="judge.activeColumn >= judge.activeEvent.criteria.length">
-                            <p class="m-0 p-0" style="font-size: 0.8rem;">
-                                Field #{{ judge.activeColumn + 1 }}:
-                            </p>
-                            <p class="m-0 p-0">
-                                TOTAL
-                            </p>
-                            <p class="m-0 p-0">{{ judge.activeEvent.criteria_total }}%</p>
-                        </div>
-                    </template>
+                <td class="text-center">
+                    <div v-if="judge.online">
+                        <p v-if="judge.activeEvent" class="fw-bold opacity-75 text-uppercase m-0" style="font-size: 0.8rem;">
+                            {{ judge.activeEvent.title }}
+                        </p>
+                        <p v-if="judge.activeTeam && judge.activeEvent" class="m-0" style="line-height: 1; margin-top: 8px !important;">
+                            <template v-if="judge.activeEvent.criteria[judge.activeColumn]">
+                                <span style="font-size: 0.7rem; font-weight: bold; opacity: 0.8">Field #{{ judge.activeColumn + 1 }}</span><br/>
+                                <span style="font-size: 0.75rem;">{{ judge.activeEvent.criteria[judge.activeColumn].title }}</span><br/>
+                                <span style="font-size: 0.8rem;">{{ judge.activeEvent.criteria[judge.activeColumn].percentage }}%</span>
+                            </template>
+                            <template v-else-if="judge.activeColumn >= judge.activeEvent.criteria.length">
+                                <span style="font-size: 0.7rem; font-weight: bold; opacity: 0.8">Field #{{ judge.activeColumn + 1 }}</span><br/>
+                                <span style="font-size: 0.75rem;">TOTAL</span><br/>
+                                <span style="font-size: 0.8rem;">{{ judge.activeEvent.criteria_total }}%</span>
+                            </template>
+                        </p>
+                    </div>
                 </td>
             </tr>
         </tbody>
