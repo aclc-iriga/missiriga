@@ -387,12 +387,12 @@ foreach ($judges as $judge) {
             <tr<?= empty($judgesWithUnlockedRatings) && !$team['unlocked'] && $team['title'] !== '' ? ' class="table-warning"' : '' ?>>
                 <!-- averages -->
                 <?php for($i=0; $i<sizeof(EVENTS); $i++) { ?>
-                    <td colspan="2" class="bb pe-3" align="right"><span class="opacity-75"><?= number_format($team['inputs'][EVENTS[$i]['slug']]['average'], 2) ?></span></td>
-                    <td align="right" class="bb pe-3 br text-secondary fw-bold"><span class="opacity-75"><?= number_format($team['inputs'][EVENTS[$i]['slug']]['average_equiv'], 2) ?></span></td>
+                    <td colspan="2" class="bb pe-3" align="right"><span class="opacity-75"><?= number_format($team['inputs'][EVENTS[$i]['slug']]['average'], 3) ?></span></td>
+                    <td align="right" class="bb pe-3 br text-secondary fw-bold"><span class="opacity-75"><?= number_format($team['inputs'][EVENTS[$i]['slug']]['average_equiv'], 3) ?></span></td>
                 <?php } ?>
 
                 <!-- total average -->
-                <td class="br bb pe-3 text-secondary fw-bold" align="right"><?= number_format($team['average'], 2) ?></td>
+                <td class="br bb pe-3 text-secondary fw-bold" align="right"><?= number_format($team['average'], 3) ?></td>
             </tr>
         <?php } ?>
         </tbody>
