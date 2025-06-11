@@ -786,19 +786,31 @@ class Judge extends User
 
         $bool     = false;
         $criteria = [];
+        $event    = null;
         if($entity instanceof Event) {
+            $event = $entity;
             if($this->hasEvent($entity))
                 $criteria = $entity->getAllCriteria();
         }
         else if($entity instanceof Criterion) {
-            if($this->hasEvent($entity->getEvent()))
+            $event = $entity->getEvent();
+            if($this->hasEvent($event))
                 $criteria = [$entity];
         }
+
+        // get eliminated team ids
+        $eliminated_team_ids = $event ? $event->getRowEliminatedTeamIds() : [];
+
         $rating = new Rating();
         $table_ratings = $rating->getTable();
         foreach($criteria as $criterion) {
             $criterion_id = $criterion->getId();
-            $stmt = $this->conn->prepare("SELECT criteria_id FROM $table_ratings WHERE judge_id = ? AND criteria_id = ? AND is_locked = 0 LIMIT 1");
+            $query  = "SELECT criteria_id FROM $table_ratings WHERE judge_id = ? AND criteria_id = ? AND is_locked = 0 ";
+            if(sizeof($eliminated_team_ids) > 0) {
+                $query .= "AND `team_id` NOT IN (" . implode(', ', $eliminated_team_ids) . ") ";
+            }
+            $query .= "LIMIT 1";
+            $stmt = $this->conn->prepare($query);
             $stmt->bind_param("ii", $this->id, $criterion_id);
             $stmt->execute();
             $result = $stmt->get_result();

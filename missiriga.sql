@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 10, 2025 at 08:30 PM
+-- Generation Time: Jun 11, 2025 at 04:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -173,6 +173,32 @@ CREATE TABLE `eliminations` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `eliminations`
+--
+
+INSERT INTO `eliminations` (`id`, `event_id`, `team_id`, `created_at`, `updated_at`) VALUES
+(1, 3, 1, '2025-06-11 02:16:38', '2025-06-11 02:16:38'),
+(2, 3, 2, '2025-06-11 02:16:40', '2025-06-11 02:16:40'),
+(3, 3, 3, '2025-06-11 02:16:41', '2025-06-11 02:16:41'),
+(4, 3, 4, '2025-06-11 02:16:43', '2025-06-11 02:16:43'),
+(5, 3, 5, '2025-06-11 02:16:44', '2025-06-11 02:16:44'),
+(6, 3, 6, '2025-06-11 02:16:45', '2025-06-11 02:16:45'),
+(7, 3, 7, '2025-06-11 02:16:46', '2025-06-11 02:16:46'),
+(8, 3, 8, '2025-06-11 02:16:47', '2025-06-11 02:16:47'),
+(9, 3, 9, '2025-06-11 02:16:48', '2025-06-11 02:16:48'),
+(10, 3, 10, '2025-06-11 02:16:50', '2025-06-11 02:16:50'),
+(11, 3, 11, '2025-06-11 02:16:51', '2025-06-11 02:16:51'),
+(12, 3, 12, '2025-06-11 02:16:52', '2025-06-11 02:16:52'),
+(13, 3, 13, '2025-06-11 02:16:53', '2025-06-11 02:16:53'),
+(14, 3, 14, '2025-06-11 02:16:54', '2025-06-11 02:16:54'),
+(15, 3, 15, '2025-06-11 02:16:55', '2025-06-11 02:16:55'),
+(16, 3, 16, '2025-06-11 02:16:57', '2025-06-11 02:16:57'),
+(17, 3, 17, '2025-06-11 02:16:58', '2025-06-11 02:16:58'),
+(18, 3, 18, '2025-06-11 02:16:59', '2025-06-11 02:16:59'),
+(19, 3, 19, '2025-06-11 02:17:00', '2025-06-11 02:17:00'),
+(20, 3, 20, '2025-06-11 02:17:01', '2025-06-11 02:17:01');
 
 -- --------------------------------------------------------
 
@@ -639,7 +665,7 @@ ALTER TABLE `deductions`
 -- AUTO_INCREMENT for table `eliminations`
 --
 ALTER TABLE `eliminations`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `events`
