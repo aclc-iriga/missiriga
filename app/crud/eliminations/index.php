@@ -63,6 +63,7 @@ require_once '../../models/Team.php';
                                 $team_id = $team->getId();
                                 $team_number = $team->getNumber();
                                 $team_location = $team->getLocation();
+                                $team_competing_for = $team->getCompetingFor();
                                 $team_avatar = $team->getAvatar();
                                 ?>
                                 <tr
@@ -80,8 +81,12 @@ require_once '../../models/Team.php';
                                                 <img class="ms-2 rounded-5" src="../uploads/<?= $team_avatar ?>" style="height: 3rem;" alt="Photo of <?= $team_name ?>">
                                             </div>
                                             <div class="ms-3 text-start">
-                                               <p class="m-0 card-header fw-bold" style="line-height: 1.1;"><?= $team_name ?></p>
-                                               <small class="m-0" style="font-size: 12px"><?= $team_location ?></small>
+                                                <p class="m-0 card-header fw-bold" style="line-height: 1.1;"><?= $team_name ?></p>
+                                                <p class="m-0" style="line-height: 1; margin-top: 3px;">
+                                                    <small class="m-0" style="font-size: 12px"><?= $team_location ?></small>
+                                                    <br>
+                                                    <small class="m-0" style="font-size: 12px;">for <b><?= $team_competing_for ?></b></small>
+                                                </p>
                                            </div>
                                         </div>
                                     </td>
