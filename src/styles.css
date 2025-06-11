@@ -129,13 +129,13 @@ html::-webkit-scrollbar {
 /* Swap-colors Animations */
 @keyframes swap-colors {
     0% {
-        background-color: #fff;
+        background-color: #1a1a1a; /* dark gray */
     }
     50% {
-        background-color: #6a6eff;
+        background-color: #2a2a7a; /* dark blue */
     }
     100% {
-        background-color: #fff;
+        background-color: #1a1a1a; /* dark gray */
     }
 }
 
