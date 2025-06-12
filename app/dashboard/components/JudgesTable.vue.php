@@ -25,25 +25,53 @@
                         <p
                             class="dropdown-toggle no-caret m-0 p-0 fw-bold opacity-75"
                             :class="!judge.helpStatus ? `text-${judge.statusClass}` : ''"
-                            style="font-size: 0.7rem; cursor: pointer; --bs-dropdown-toggle-icon: none;"
+                            style="font-size: 0.7rem; cursor: pointer;"
                             data-bs-toggle="dropdown"
                             role="button"
                             aria-expanded="false"
                         >
                             {{ judge.statusText }}
-                            <i class="fas fa-fw fa-caret-down" v-if="judge.helpStatus"></i>
+                            <i class="fas fa-fw fa-caret-down" v-if="judge.online || judge.helpStatus"></i>
                         </p>
-                        <ul class="dropdown-menu" v-show="judge.helpStatus">
-                            <li>
-                                <button class="dropdown-item text-success" @click="$emit('terminate-help', judge.id)">
+                        <ul class="dropdown-menu" v-show="judge.online || judge.helpStatus">
+                            <li class="py-1 fw-bold" style="font-size: 0.8rem; opacity: 0.8">
+                                <div class="d-flex justify-content-between align-items-center px-3">
+                                    <span>JUDGE #{{ judge.number }}</span>
+                                    <i class="fas fa-fw fa-remove" style="cur" onclick="event.stopPropagation();bootstrap.Dropdown.getOrCreateInstance(this.closest('.dropdown')).hide()"></i>
+                                </div>
+                            </li>
+                            <li v-if="judge.helpStatus">
+                                <button class="dropdown-item btn-dropdown" @click="$emit('terminate-help', judge.id)" style="color: orangered">
                                     <small class="fw-bold">
-                                        <i class="fas fa-fw fa-check"></i>Done helping JUDGE #{{ judge.number }}
+                                        <i class="fas fa-fw fa-circle-question"></i> Terminate Help
                                     </small>
                                 </button>
                             </li>
+                            <template v-if="judge.online">
+                                <li v-if="judge.events.length > 0 && judge.helpStatus" style="height: 15px;"></li>
+                                <li v-for="(eventKey, eventKeyIndex) in judge.events" :key="eventKey">
+                                    <button
+                                        v-if="judge.activeEvent && judge.activeEvent.id === events[eventKey].id"
+                                        class="dropdown-item text-success btn-dropdown btn-dropdown-active"
+                                        @click="$emit('refresh-event', { judge: judge, event: events[eventKey] })"
+                                    >
+                                        <small class="fw-bold">
+                                            <i class="fas fa-fw fa-rotate"></i> {{ events[eventKey].title }}
+                                        </small>
+                                    </button>
+                                    <button
+                                        v-else
+                                        class="dropdown-item text-primary btn-dropdown"
+                                        @click="$emit('switch-event', { judge: judge, event: events[eventKey] })"
+                                    >
+                                        <small class="fw-bold">
+                                            <i class="fas fa-fw fa-bars-progress"></i> {{ events[eventKey].title }}
+                                        </small>
+                                    </button>
+                                </li>
+                            </template>
                         </ul>
                     </div>
-
                 </td>
                 <td>
                     <team-block v-if="judge.online && judge.activeTeam" :team="judge.activeTeam"></team-block>

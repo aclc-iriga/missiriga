@@ -24,6 +24,16 @@ require_once '../config/database.php';
         .no-caret::after {
             display: none !important;
         }
+        .btn-dropdown-active,
+        .btn-dropdown-active:active {
+            background-color: #eee !important;
+        },
+        .btn-dropdown:not(.btn-dropdown-active):hover {
+            background-color: #ddd !important;
+        }
+        .btn-dropdown:not(.btn-dropdown-active):active {
+            background-color: #ccc !important;
+        }
         @keyframes helpBlink {
             0%, 100% {
                 color: inherit;

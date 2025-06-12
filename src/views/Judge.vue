@@ -1,7 +1,7 @@
 <template>
     <top-nav ref="top-nav" @toggle-help="handleToggleHelp" @sign-out="handleSignOut"/>
 
-    <side-nav/>
+    <side-nav ref="side-nav"/>
 
 	<!--	Judge Score Sheet	-->
 	<v-main v-if="$store.getters['auth/getUser'] !== null">
@@ -913,12 +913,7 @@
                             }
 
                             // send active event to websocket server
-                            this.websocketSend(
-                                '__active_event__',
-                                {
-                                    event_id: data.event?.id
-                                }
-                            );
+                            this.sendActiveEvent();
                         },
                         error: (error) => {
                             alert(`ERROR ${error.status}: ${error.statusText}`);
@@ -1448,6 +1443,13 @@
 
                 this.closeTieBreaker();
             },
+            sendActiveEvent() {
+                const sendActiveEvent = () => {
+                    this.websocketSend('__active_event__', { event_id: this.event.id });
+                };
+                if (this.event) sendActiveEvent();
+                else setTimeout(() => { sendActiveEvent(); }, 100);
+            },
             handleSignOut() {
                 this.websocketSend('__sign_out__');
             },
@@ -1470,7 +1472,7 @@
 
             // handle websocket open
             this.ws.onopen = () => {
-
+                this.sendActiveEvent();
             };
 
             // handle websocket message
@@ -1487,6 +1489,38 @@
                         const user = this.$store.getters['auth/getUser'];
                         user.calling = !body;
                         this.$refs['top-nav'].toggleHelp();
+                    }
+
+                    // receive active event
+                    else if (subject === '__active_event__') {
+                        if (body !== '') {
+                            localStorage.setItem('active-event', body);
+                            const events = this.$store.getters['events/getEvents'];
+                            let event = null;
+                            for (let i = 0; i < events.length; i++) {
+                                if (body === events[i].slug) {
+                                    event = events[i];
+                                }
+                            }
+
+                            // event is found: route to that event
+                            if (event) {
+                                this.$router.push({ params: { eventSlug: event.slug } });
+                            }
+                            // event is not found: refresh to that event
+                            else {
+                                window.location.href = `${window.location.origin}/${this.competition}/judge/${body}`;
+                            }
+                        }
+                    }
+
+                    // receive event refresh
+                    else if (subject === '__refresh_event__') {
+                        if (body !== '' && this.event) {
+                            if (body === this.event.slug) {
+                                window.location.reload();
+                            }
+                        }
                     }
                 }
             };

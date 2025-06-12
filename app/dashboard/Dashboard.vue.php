@@ -33,6 +33,13 @@
     foreach ($judge_objects as $judge_object) {
         $judge_key = 'judge_' . $judge_object->getId();
         $judges_assoc[$judge_key] = $judge_object->toArray();
+
+        // judge events
+        $judges_assoc[$judge_key]['events'] = [];
+        foreach ($judge_object->getAllEvents() as $event_object) {
+            $event_key = 'event_' . $event_object->getId();
+            $judges_assoc[$judge_key]['events'][] = $event_key;
+        }
     }
 
     // get events
@@ -82,6 +89,8 @@
                 :judges-for-help="judges_for_help"
                 :teams="teams"
                 @terminate-help="terminateJudgeHelp"
+                @switch-event="switchJudgeEvent"
+                @refresh-event="refreshJudgeEvent"
             >
             </judges-table>
         </div>
@@ -193,6 +202,45 @@
                         judge_id: judgeId
                     }
                 );
+            },
+
+            /**
+             * @method switchJudgeEvent
+             * @description Switch judge event.
+             * @param {Object} payload
+             */
+            switchJudgeEvent(payload) {
+                if (payload.judge && payload.event) {
+                    if (confirm(`SWITCH active event of JUDGE #${payload.judge.number} to "${payload.event.title}"?`)) {
+                        this.websocketSend(
+                            '__switch_judge_event__',
+                            {
+                                judge_id  : payload.judge.id,
+                                event_slug: payload.event.slug
+                            }
+                        );
+                    }
+                }
+            },
+
+
+            /**
+             * @method refreshJudgeEvent
+             * @description Refresh judge event.
+             * @param {Object} payload
+             */
+            refreshJudgeEvent(payload) {
+                if (payload.judge && payload.event) {
+                    if (confirm(`REFRESH "${payload.event.title}" of JUDGE #${payload.judge.number}?`)) {
+                        this.websocketSend(
+                            '__refresh_judge_event__',
+                            {
+                                judge_id  : payload.judge.id,
+                                event_slug: payload.event.slug
+                            }
+                        );
+                    }
+                }
             }
         },
 
