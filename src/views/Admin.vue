@@ -190,7 +190,7 @@
                                     'bg-yellow-lighten-3' : allSubmitted && team.ratings.inputs[`judge_${judge.id}`].final.is_locked && team.title !== ''
                                 }"
                             >
-                                <span :class="{ blurred: !team.ratings.inputs[`judge_${judge.id}`].final.is_locked && team.ratings.inputs[`judge_${judge.id}`].final.deducted <= 0 }">
+                                <span :class="{ blurred: !team.ratings.inputs[`judge_${judge.id}`].final.is_locked && (team.ratings.inputs[`judge_${judge.id}`].final.deducted <= 0 || team.ratings.inputs[`judge_${judge.id}`].final.original < $store.state.rating.min) }">
                                     {{ team.ratings.inputs[`judge_${judge.id}`].rank.fractional.toFixed(2) }}
                                 </span>
                             </div>
@@ -198,7 +198,8 @@
                             <div
                                 :class="{
                                     'text-dark-darken-1': judge.is_chairman == 0,
-                                    'text-red-darken-3': judge.is_chairman == 1
+                                    'text-red-darken-3': judge.is_chairman == 1,
+                                    'text-warning': team.ratings.inputs[`judge_${judge.id}`].final.original < $store.state.rating.min
                                 }"
                             >
                                 <span :class="{ blurred: !team.ratings.inputs[`judge_${judge.id}`].final.is_locked && team.ratings.inputs[`judge_${judge.id}`].final.deducted <= 0 }">
