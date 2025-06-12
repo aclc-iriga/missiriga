@@ -229,7 +229,7 @@
                             class="text-right font-weight-bold text-green-darken-4"
                             :class="{ 'bg-yellow-lighten-3': allSubmitted && team.title !== '' }"
                         >
-                            <span :style="{ 'opacity': (this.teams_with_ties.includes(teamKey)) ? 1 : 0.38 }">{{ team.ratings.average.toFixed(3) }}</span>
+                            <span :style="{ 'opacity': (this.teams_with_ties.includes(teamKey)) ? 1 : 0.45 }">{{ team.ratings.average.toFixed(3) }}</span>
                         </td>
                         <td
                             class="text-center font-weight-bold text-h6"
