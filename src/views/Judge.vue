@@ -1,5 +1,5 @@
 <template>
-    <top-nav @toggle-help="handleToggleHelp" @sign-out="handleSignOut"/>
+    <top-nav ref="top-nav" @toggle-help="handleToggleHelp" @sign-out="handleSignOut"/>
 
     <side-nav/>
 
@@ -1466,7 +1466,6 @@
         created() {
             // initialize websocket connection
             this.competition = import.meta.env.BASE_URL.replaceAll('/', '');
-            console.log(`${this.$store.getters['websocketUrl']}?competition=${this.competition}&entity=judge&id=${this.$store.getters['auth/getUser']?.id}`);
             this.ws = new WebSocket(`${this.$store.getters['websocketUrl']}?competition=${this.competition}&entity=judge&id=${this.$store.getters['auth/getUser']?.id}`);
 
             // handle websocket open
@@ -1476,7 +1475,20 @@
 
             // handle websocket message
             this.ws.onmessage = (e) => {
+                let data = {};
+                try { data = JSON.parse(e.data); } catch (e) {}
 
+                if ('subject' in data && 'body' in data) {
+                    const subject = data.subject;
+                    const body    = data.body;
+
+                    // receive help status
+                    if (subject === '__help_status__') {
+                        const user = this.$store.getters['auth/getUser'];
+                        user.calling = !body;
+                        this.$refs['top-nav'].toggleHelp();
+                    }
+                }
             };
 
             // handle websocket close

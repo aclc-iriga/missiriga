@@ -21,7 +21,29 @@
                         <h6 class="m-0" style="font-size: 0.9rem;">JUDGE #{{ judge.number }}</h6>
                         <p class="m-0" style="line-height: 1; font-size: 0.9rem; opacity: 0.8; margin-top: 4px !important;">{{ judge.name }}</p>
                     </div>
-                    <p class="m-0 p-0 fw-bold opacity-75" :class="!judge.helpStatus ? `text-${judge.statusClass}` : ''" style="font-size: 0.7rem;">{{ judge.statusText }}</p>
+                    <div class="dropdown d-inline">
+                        <p
+                            class="dropdown-toggle no-caret m-0 p-0 fw-bold opacity-75"
+                            :class="!judge.helpStatus ? `text-${judge.statusClass}` : ''"
+                            style="font-size: 0.7rem; cursor: pointer; --bs-dropdown-toggle-icon: none;"
+                            data-bs-toggle="dropdown"
+                            role="button"
+                            aria-expanded="false"
+                        >
+                            {{ judge.statusText }}
+                            <i class="fas fa-fw fa-caret-down" v-if="judge.helpStatus"></i>
+                        </p>
+                        <ul class="dropdown-menu" v-show="judge.helpStatus">
+                            <li>
+                                <button class="dropdown-item text-success" @click="$emit('terminate-help', judge.id)">
+                                    <small class="fw-bold">
+                                        <i class="fas fa-fw fa-check"></i>Done helping JUDGE #{{ judge.number }}
+                                    </small>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
                 </td>
                 <td>
                     <team-block v-if="judge.online && judge.activeTeam" :team="judge.activeTeam"></team-block>

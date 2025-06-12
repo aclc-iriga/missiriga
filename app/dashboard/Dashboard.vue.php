@@ -81,6 +81,7 @@
                 :judges-team-column="judges_team_column"
                 :judges-for-help="judges_for_help"
                 :teams="teams"
+                @terminate-help="terminateJudgeHelp"
             >
             </judges-table>
         </div>
@@ -162,7 +163,37 @@
 
         /** METHODS */
         methods: {
+            /**
+             * @method websocketSend
+             * @description Send message to WebSocket server.
+             * @param {string} action
+             * @param {any} payload
+             */
+            websocketSend(action, payload) {
+                if (this.websocket.conn !== null && this.websocket.conn.readyState === WebSocket.OPEN) {
+                    this.websocket.conn.send(JSON.stringify({
+                        competition: '<?= $competition ?>',
+                        entity     : 'dashboard',
+                        id         : this.admin?.id,
+                        action     : action,
+                        payload    : payload
+                    }));
+                }
+            },
 
+            /**
+             * @method terminateJudgeHelp
+             * @description Turn off help for given judge id.
+             * @param {number} judgeId
+             */
+            terminateJudgeHelp(judgeId) {
+                this.websocketSend(
+                    '__terminate_help__',
+                    {
+                        judge_id: judgeId
+                    }
+                );
+            }
         },
 
 

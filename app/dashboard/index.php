@@ -7,10 +7,11 @@ require_once '../config/database.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../crud/dist/bootstrap-5.2.3/css/bootstrap.min.css">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <link rel="stylesheet" href="../crud/dist/bootstrap-5.2.3/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../crud/dist/fontawesome-6.3.0/css/all.min.css"/>
     <script src="../crud/dist/vue-3.2.47/vue.global.js"></script>
     <style>
         th, td {
@@ -19,6 +20,9 @@ require_once '../config/database.php';
         .help-blink {
             animation: helpBlink 1.2s infinite;
             color: inherit;
+        }
+        .no-caret::after {
+            display: none !important;
         }
         @keyframes helpBlink {
             0%, 100% {
