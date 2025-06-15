@@ -4,27 +4,37 @@ let forced = false;
 
 // initialize screensaver
 const screensaver = document.getElementById("screensaver");
-screensaver.style.display = "none";
+
+// show screensaver
+const showScreenSaver = () => {
+    screensaver.style.display = "block";
+};
+
+// hide screensaver
+const hideScreenSaver = () => {
+    screensaver.style.display = "none";
+};
+hideScreenSaver();
 
 // set idle time for 2 and a half minutes
 const startIdleTime = () => {
     idleTime = setTimeout(() => {
         // show styles for screen saver
-        screensaver.style.display = "block";
+        showScreenSaver();
     }, 150000);
 }
 
 // clear idle time
 const clearIdleTime = () => {
     clearTimeout(idleTime);
-    screensaver.style.display = "none";
+    hideScreenSaver();
     // starts idle time again after idle time is cleared
     startIdleTime();
 }
 
 // force screensaver
 const forceScreensaver = () => {
-    screensaver.style.display = "block";
+    showScreenSaver();
     forced = true;
     setTimeout(() => {
         forced = false;

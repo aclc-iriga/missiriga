@@ -251,7 +251,7 @@
                         {{ team.number }}
                     </td>
                     <td style="width: 72px;">
-                        <v-avatar size="72" class="avatar" style="cursor: pointer;" :style="{ 'opacity' : (coordinates.y == teamIndex && !scoreSheetDisabled) ? '1' : '0.9' }">
+                        <v-avatar size="72" class="avatar" style="cursor: pointer;" :style="{ 'opacity' : (coordinates.y == teamIndex && !scoreSheetDisabled) ? '1' : '0.93' }">
                             <v-img class="avatar-hover-effect" cover :src="`${$store.getters.appURL}/crud/uploads/${team.avatar}`" transition="none" eager>
                                 <v-tooltip activator="parent" location="left" align="center">
                                     <v-card
@@ -260,7 +260,7 @@
                                     >
                                         <v-img
                                             height="400"
-                                            width="280"
+                                            width="273"
                                             :lazy-src="`${$store.getters.appURL}/crud/uploads/full/${team.avatar}`"
                                             :src="`${$store.getters.appURL}/crud/uploads/full/${team.avatar}`"
                                             cover
@@ -1505,6 +1505,7 @@
 
                             // event is found: route to that event
                             if (event) {
+                                hideScreenSaver();
                                 this.$router.push({ params: { eventSlug: event.slug } });
                             }
                             // event is not found: refresh to that event
@@ -1519,6 +1520,35 @@
                         if (body !== '' && this.event) {
                             if (body === this.event.slug) {
                                 window.location.reload();
+                            }
+                        }
+                    }
+
+                    // receive all active event
+                    else if (subject === '__all_active_event__') {
+                        if (body !== '') {
+                            localStorage.setItem('active-event', body);
+                            if (this.event && this.event.slug === body) {
+                                window.location.reload();
+                            }
+                            else {
+                                const events = this.$store.getters['events/getEvents'];
+                                let event = null;
+                                for (let i = 0; i < events.length; i++) {
+                                    if (body === events[i].slug) {
+                                        event = events[i];
+                                    }
+                                }
+
+                                // event is found: route to that event
+                                if (event) {
+                                    hideScreenSaver();
+                                    this.$router.push({ params: { eventSlug: event.slug } });
+                                }
+                                // event is not found: refresh to that event
+                                else {
+                                    window.location.href = `${window.location.origin}/${this.competition}/judge/${body}`;
+                                }
                             }
                         }
                     }

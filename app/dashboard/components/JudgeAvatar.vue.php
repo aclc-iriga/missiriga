@@ -1,13 +1,12 @@
 <template id="judge-avatar"><div style="display: contents;">
 <!-------------------------------------------------------->
 
-
     <span
         class="d-flex justify-content-center align-items-center"
         :class="{ 'help-blink': helpStatus }"
-        style="border: 1px solid #aaa; border-radius: 100%; width: 25px; height: 25px;"
+        style="border: 1px solid #555; background-color: #555; color: #fff; border-radius: 100%; width: 26px; height: 26px;"
     >
-        <strong class="opacity-75" style="font-size: 0.75rem;">J{{ judge.number }}</strong>
+        <strong class="opacity-75" style="font-size: 1rem;">{{ judge.number }}</strong>
     </span>
 
 <!-------------------------------------------------------->

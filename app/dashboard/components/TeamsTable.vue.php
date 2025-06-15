@@ -112,6 +112,11 @@
 
         /** PROPS */
         props: {
+            competition: {
+                type: String,
+                required: true
+            },
+
             teams: {
                 type: Object,
                 required: true
@@ -169,7 +174,7 @@
                 const eventJudges = {};
                 for (let i = 0; i < this.judgesOnline.length; i++) {
                     const judgeKey = this.judgesOnline[i];
-                    if (judgeKey in this.judgesEvent) {
+                    if (judgeKey in this.judgesEvent && this.judges[judgeKey].visible) {
                         if (this.judgesEvent[judgeKey] === `event_${this.event.id}`) {
                             if (judgeKey in this.judgesTeamColumn) {
                                 const judgeTeamKey = this.judgesTeamColumn[judgeKey].team;

@@ -65,5 +65,33 @@ require_once '../config/database.php';
         app.mount('#app');
     </script>
     <script src="../crud/dist/bootstrap-5.2.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // reload on idle
+        let idleTime = null;
+
+        // set idle time for 5 minutes
+        const startIdleTime = () => {
+            idleTime = setTimeout(() => {
+                window.location.reload();
+            }, 300000);
+        }
+
+        // clear idle time
+        const clearIdleTime = () => {
+            clearTimeout(idleTime);
+            startIdleTime();
+        }
+
+        // start idle time
+        startIdleTime();
+
+        // event handlers
+        window.addEventListener('mousemove', function() {
+            clearIdleTime();
+        });
+        window.addEventListener('keypress', function() {
+            clearIdleTime();
+        });
+    </script>
 </body>
 </html>
