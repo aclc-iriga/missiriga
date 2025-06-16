@@ -47,7 +47,7 @@ require_once '../config/database.php';
     </style>
     <title>Dashboard</title>
 </head>
-<body style="background-color: #eee">
+<body style="background-color: #f9f9f9">
     <?php require_once __DIR__ . '/components/TeamBlock.vue.php'; ?>
     <?php require_once __DIR__ . '/components/JudgeBlock.vue.php'; ?>
     <?php require_once __DIR__ . '/components/JudgeAvatar.vue.php'; ?>

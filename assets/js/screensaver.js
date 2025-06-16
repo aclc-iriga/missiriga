@@ -7,12 +7,18 @@ const screensaver = document.getElementById("screensaver");
 
 // show screensaver
 const showScreenSaver = () => {
-    screensaver.style.display = "block";
+    if (screensaver.style.display !== "block") {
+        screensaver.style.display = "block";
+        window.dispatchEvent(new CustomEvent('screensaver-shown'));
+    }
 };
 
 // hide screensaver
 const hideScreenSaver = () => {
-    screensaver.style.display = "none";
+    if (screensaver.style.display !== "none") {
+        screensaver.style.display = "none";
+        window.dispatchEvent(new CustomEvent('screensaver-hidden'));
+    }
 };
 hideScreenSaver();
 

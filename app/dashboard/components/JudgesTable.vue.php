@@ -1,7 +1,7 @@
 <template id="judges-table"><div style="display: contents;">
 <!-------------------------------------------------------->
 
-    <table class="table sticky-top table-bordered">
+    <table class="table sticky-top">
         <thead class="bg-white">
             <tr>
                 <th style="width: 30%" class="text-center p-0">
@@ -22,6 +22,30 @@
                             </button>
 
                             <ul class="dropdown-menu">
+                                <li class="px-3 pb-1 fw-normal text-secondary">
+                                    <small style="font-size: 0.8rem; opacity: 0.9">TOGGLE SCREENSAVER</small>
+                                </li>
+                                <li>
+                                    <button
+                                        class="dropdown-item text-secondary btn-dropdown fw-bold"
+                                        @click="$emit('toggle-screensaver-all', { status: true, judgeKeys: visible.items })"
+                                        :disabled="!hasOnlineJudge"
+                                        :style="{ 'opacity': hasOnlineJudge ? '1' : '0.5' }"
+                                    >
+                                        <i class="fas fa-fw fa-eye"></i> Show Screensaver
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="dropdown-item text-secondary btn-dropdown fw-bold"
+                                        @click="$emit('toggle-screensaver-all', { status: false, judgeKeys: visible.items })"
+                                        :disabled="!hasOnlineJudge"
+                                        :style="{ 'opacity': hasOnlineJudge ? '1' : '0.5' }"
+                                    >
+                                        <i class="fas fa-fw fa-eye-slash"></i> Hide Screensaver
+                                    </button>
+                                </li>
+                                <li><hr></li>
                                 <li class="px-3 pb-1 fw-normal text-secondary">
                                     <small style="font-size: 0.8rem; opacity: 0.9">SET ACTIVE EVENT / PORTION</small>
                                 </li>
@@ -73,61 +97,83 @@
                 :class="{ 'table-danger': !judge.online, 'help-blink': judge.helpStatus }"
             >
                 <template v-if="judge.visible">
-                    <td class="text-center" style="height: 115px;">
-                        <div style="margin-bottom: 8px;">
-                            <h6 class="m-0" style="font-size: 0.9rem;">JUDGE #{{ judge.number }}</h6>
-                            <p class="m-0" style="line-height: 1; font-size: 0.9rem; opacity: 0.8; margin-top: 4px !important;">{{ judge.name }}</p>
-                        </div>
-                        <div class="dropdown d-inline">
-                            <p
-                                class="dropdown-toggle no-caret m-0 p-0 fw-bold opacity-75"
-                                :class="!judge.helpStatus ? `text-${judge.statusClass}` : ''"
-                                style="font-size: 0.7rem; cursor: pointer;"
-                                data-bs-toggle="dropdown"
-                                role="button"
-                                aria-expanded="false"
-                            >
-                                {{ judge.statusText }}
-                                <i class="fas fa-fw fa-caret-down" v-if="judge.online || judge.helpStatus"></i>
-                            </p>
-                            <ul class="dropdown-menu" v-show="judge.online || judge.helpStatus">
-                                <li class="py-1 fw-bold" style="font-size: 0.8rem; opacity: 0.8">
-                                    <div class="d-flex justify-content-between align-items-center px-3">
-                                        <span>JUDGE #{{ judge.number }}</span>
-                                        <i class="fas fa-fw fa-remove" style="cur" onclick="event.stopPropagation();bootstrap.Dropdown.getOrCreateInstance(this.closest('.dropdown')).hide()"></i>
-                                    </div>
-                                </li>
-                                <li v-if="judge.helpStatus">
-                                    <button class="dropdown-item btn-dropdown" @click="$emit('terminate-help', judge.id)" style="color: orangered">
-                                        <small class="fw-bold">
-                                            <i class="fas fa-fw fa-circle-question"></i> Terminate Help
-                                        </small>
-                                    </button>
-                                </li>
-                                <template v-if="judge.online">
-                                    <li v-if="judge.events.length > 0 && judge.helpStatus" style="height: 15px;"></li>
-                                    <li v-for="(eventKey, eventKeyIndex) in judge.events" :key="eventKey">
-                                        <button
-                                            v-if="judge.activeEvent && judge.activeEvent.id === events[eventKey].id"
-                                            class="dropdown-item text-success btn-dropdown btn-dropdown-active"
-                                            @click="$emit('refresh-event', { judge: judge, event: events[eventKey] })"
-                                        >
-                                            <small class="fw-bold">
-                                                <i class="fas fa-fw fa-rotate"></i> {{ events[eventKey].title }}
-                                            </small>
-                                        </button>
-                                        <button
-                                            v-else
-                                            class="dropdown-item text-primary btn-dropdown"
-                                            @click="$emit('switch-event', { judge: judge, event: events[eventKey] })"
-                                        >
-                                            <small class="fw-bold">
-                                                <i class="fas fa-fw fa-bars-progress"></i> {{ events[eventKey].title }}
-                                            </small>
-                                        </button>
-                                    </li>
-                                </template>
-                            </ul>
+                    <td class="text-center p-0">
+                        <div
+                            class="d-flex justify-content-center align-items-center"
+                            style="height: 115px; border-right: 8px solid transparent; transition: border-left 0.3s ease"
+                            :style="{ 'border-left': judge.onScreenSaver ? '8px solid rgb(222, 226, 230)' : '8px solid transparent' }"
+                        >
+                            <div>
+                                <div style="margin-bottom: 8px;">
+                                    <h6 class="m-0" style="font-size: 0.9rem;">JUDGE #{{ judge.number }}</h6>
+                                    <p class="m-0" style="line-height: 1; font-size: 0.9rem; opacity: 0.8; margin-top: 4px !important;">{{ judge.name }}</p>
+                                </div>
+                                <div class="dropdown d-inline">
+                                    <p
+                                        class="dropdown-toggle no-caret m-0 p-0 fw-bold opacity-75"
+                                        :class="!judge.helpStatus ? `text-${judge.statusClass}` : ''"
+                                        style="font-size: 0.7rem; cursor: pointer;"
+                                        data-bs-toggle="dropdown"
+                                        role="button"
+                                        aria-expanded="false"
+                                    >
+                                        {{ judge.statusText }}
+                                        <i class="fas fa-fw fa-caret-down" v-if="judge.online || judge.helpStatus"></i>
+                                    </p>
+                                    <ul class="dropdown-menu" v-show="judge.online || judge.helpStatus">
+                                        <li class="py-1 fw-bold" style="font-size: 0.8rem; opacity: 0.8">
+                                            <div class="d-flex justify-content-between align-items-center px-3">
+                                                <span>JUDGE #{{ judge.number }}</span>
+                                                <i class="fas fa-fw fa-remove" style="cur" onclick="event.stopPropagation();bootstrap.Dropdown.getOrCreateInstance(this.closest('.dropdown')).hide()"></i>
+                                            </div>
+                                        </li>
+                                        <li v-if="judge.onScreenSaver">
+                                            <button class="dropdown-item btn-dropdown text-secondary" @click="$emit('toggle-screensaver', { judge: judge, status: false })">
+                                                <small class="fw-bold">
+                                                    <i class="fas fa-fw fa-eye-slash"></i> Hide Screensaver
+                                                </small>
+                                            </button>
+                                        </li>
+                                        <li v-else>
+                                            <button class="dropdown-item btn-dropdown text-success" @click="$emit('toggle-screensaver', { judge: judge, status: true })">
+                                                <small class="fw-bold">
+                                                    <i class="fas fa-fw fa-eye"></i> Show Screensaver
+                                                </small>
+                                            </button>
+                                        </li>
+                                        <li v-if="judge.helpStatus">
+                                            <button class="dropdown-item btn-dropdown" @click="$emit('terminate-help', judge.id)" style="color: orangered">
+                                                <small class="fw-bold">
+                                                    <i class="fas fa-fw fa-circle-question"></i> Terminate Help
+                                                </small>
+                                            </button>
+                                        </li>
+                                        <template v-if="judge.online">
+                                            <li v-if="judge.events.length > 0" style="height: 15px;"></li>
+                                            <li v-for="(eventKey, eventKeyIndex) in judge.events" :key="eventKey">
+                                                <button
+                                                    v-if="judge.activeEvent && judge.activeEvent.id === events[eventKey].id"
+                                                    class="dropdown-item text-success btn-dropdown btn-dropdown-active"
+                                                    @click="$emit('refresh-event', { judge: judge, event: events[eventKey] })"
+                                                >
+                                                    <small class="fw-bold">
+                                                        <i class="fas fa-fw fa-rotate"></i> {{ events[eventKey].title }}
+                                                    </small>
+                                                </button>
+                                                <button
+                                                    v-else
+                                                    class="dropdown-item text-primary btn-dropdown"
+                                                    @click="$emit('switch-event', { judge: judge, event: events[eventKey] })"
+                                                >
+                                                    <small class="fw-bold">
+                                                        <i class="fas fa-fw fa-bars-progress"></i> {{ events[eventKey].title }}
+                                                    </small>
+                                                </button>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </td>
                     <td>
@@ -209,6 +255,11 @@
                 required: true
             },
 
+            judgesOnScreensaver: {
+                type: Array,
+                required: true
+            },
+
             teams: {
                 type: Object,
                 required: true
@@ -285,6 +336,7 @@
                         activeTeam    : activeTeam,
                         activeColumn  : activeColumn,
                         helpStatus    : helpStatus,
+                        onScreenSaver : this.judgesOnScreensaver.includes(judgeKey),
                         visible       : this.isJudgeVisible(judgeKey)
                     }
                 }

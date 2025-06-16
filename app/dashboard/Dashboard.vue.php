@@ -88,7 +88,10 @@
                 :judges-event="judges_event"
                 :judges-team-column="judges_team_column"
                 :judges-for-help="judges_for_help"
+                :judges-on-screensaver="judges_on_screensaver"
                 :teams="teams"
+                @toggle-screensaver="toggleScreensaver"
+                @toggle-screensaver-all="toggleScreensaverAll"
                 @terminate-help="terminateJudgeHelp"
                 @switch-event="switchJudgeEvent"
                 @refresh-event="refreshJudgeEvent"
@@ -153,10 +156,11 @@
                 teams : <?= json_encode($teams_assoc) ?>,
                 judges: <?= json_encode($judges_assoc) ?>,
 
-                judges_online     : [],
-                judges_event      : {},
-                judges_team_column: {},
-                judges_for_help   : []
+                judges_online        : [],
+                judges_event         : {},
+                judges_team_column   : {},
+                judges_for_help      : [],
+                judges_on_screensaver: []
             }
         },
 
@@ -190,6 +194,49 @@
                         action     : action,
                         payload    : payload
                     }));
+                }
+            },
+
+            /**
+             * @method toggleScreensaver
+             * @description Toggle judge screensaver.
+             * @param {Object} payload
+             */
+            toggleScreensaver(payload) {
+                if ('judge' in payload && 'status' in payload) {
+                    this.websocketSend(
+                        '__toggle_judge_screensaver__',
+                        {
+                            judge_id: payload.judge.id,
+                            status  : payload.status
+                        }
+                    );
+                }
+            },
+
+            /**
+             * @method toggleScreensaverAll
+             * @description Toggle all judges' screensaver status.
+             * @param {Object} payload
+             */
+            toggleScreensaverAll(payload) {
+                if ('status' in payload && 'judgeKeys' in payload) {
+                    const status    = payload.status;
+                    const judgeKeys = payload.judgeKeys;
+                    if (judgeKeys.length > 0) {
+                        if (confirm(`${status ? 'SHOW' : 'HIDE'} screensaver of ALL VISIBLE JUDGES?`)) {
+                            this.websocketSend(
+                                '__toggle_all_judge_screensaver__',
+                                {
+                                    status    : status,
+                                    judge_keys: judgeKeys
+                                }
+                            );
+                            setTimeout(() => {
+                                document.getElementById('btn-judges-dropdown-toggle').click();
+                            }, 1);
+                        }
+                    }
                 }
             },
 
@@ -311,6 +358,11 @@
                         // receive judges requesting for help
                         else if (subject === '__judges_requesting_help__') {
                             this.judges_for_help = body;
+                        }
+
+                        // receive judges on screensaver
+                        else if (subject === '__judges_on_screensaver__') {
+                            this.judges_on_screensaver = body;
                         }
                     }
                 };

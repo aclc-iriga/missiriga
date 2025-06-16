@@ -1453,6 +1453,12 @@
             handleSignOut() {
                 this.websocketSend('__sign_out__');
             },
+            handleScreensaverShown() {
+                this.websocketSend('__screensaver__', { status: true });
+            },
+            handleScreensaverHidden() {
+                this.websocketSend('__screensaver__', { status: false });
+            },
             websocketSend(action, payload) {
                 if (this.ws !== null && this.ws.readyState === WebSocket.OPEN) {
                     this.ws.send(JSON.stringify({
@@ -1488,7 +1494,10 @@
                     if (subject === '__help_status__') {
                         const user = this.$store.getters['auth/getUser'];
                         user.calling = !body;
-                        this.$refs['top-nav'].toggleHelp();
+                        const topNav = this.$refs['top-nav'];
+                        if (topNav) {
+                            topNav.toggleHelp();
+                        }
                     }
 
                     // receive active event
@@ -1552,6 +1561,16 @@
                             }
                         }
                     }
+
+                    // receive screensaver status
+                    else if (subject === '__screensaver_status__') {
+                        if (body) {
+                            showScreenSaver();
+                        }
+                        else {
+                            hideScreenSaver();
+                        }
+                    }
                 }
             };
 
@@ -1562,6 +1581,14 @@
         },
         mounted() {
             this.$emit('startPing');
+            this.$nextTick(() => {
+                window.addEventListener('screensaver-shown' , this.handleScreensaverShown);
+                window.addEventListener('screensaver-hidden', this.handleScreensaverHidden);
+            });
+        },
+        beforeUnmount() {
+            window.removeEventListener('screensaver-shown' , this.handleScreensaverShown);
+            window.removeEventListener('screensaver-hidden', this.handleScreensaverHidden);
         }
     }
 </script>
