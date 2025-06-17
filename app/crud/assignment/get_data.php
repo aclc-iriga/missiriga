@@ -40,7 +40,7 @@ if(isset($_POST['option'])) {
     else {
         $judgeEvent = [];
     }
-    sleep(1);
+    // sleep(1);
 }
 
 if (isset($_POST['toggleValue'])){
