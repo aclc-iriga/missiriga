@@ -28,7 +28,7 @@
                                 <li>
                                     <button
                                         class="dropdown-item text-secondary btn-dropdown fw-bold"
-                                        @click="$emit('toggle-screensaver-all', { status: true, judgeKeys: visible.items })"
+                                        @click="$emit('toggle-screensaver-all', { status: true, judgeKeys: onlineVisibleItems })"
                                         :disabled="!hasOnlineJudge"
                                         :style="{ 'opacity': hasOnlineJudge ? '1' : '0.5' }"
                                     >
@@ -38,7 +38,7 @@
                                 <li>
                                     <button
                                         class="dropdown-item text-secondary btn-dropdown fw-bold"
-                                        @click="$emit('toggle-screensaver-all', { status: false, judgeKeys: visible.items })"
+                                        @click="$emit('toggle-screensaver-all', { status: false, judgeKeys: onlineVisibleItems })"
                                         :disabled="!hasOnlineJudge"
                                         :style="{ 'opacity': hasOnlineJudge ? '1' : '0.5' }"
                                     >
@@ -52,7 +52,7 @@
                                 <li v-for="([eventKey, event], eventIndex) in Object.entries(events)" :key="event.id">
                                     <button
                                         class="dropdown-item text-secondary btn-dropdown fw-bold"
-                                        @click="$emit('switch-event-all', { event: event, judgeKeys: visible.items })"
+                                        @click="$emit('switch-event-all', { event: event, judgeKeys: onlineVisibleItems })"
                                         :disabled="!hasOnlineJudge"
                                         :style="{ 'opacity': hasOnlineJudge ? '1' : '0.5' }"
                                     >
@@ -101,7 +101,7 @@
                         <div
                             class="d-flex justify-content-center align-items-center"
                             style="height: 115px; border-right: 8px solid transparent; transition: border-left 0.3s ease"
-                            :style="{ 'border-left': judge.onScreenSaver ? '8px solid rgb(222, 226, 230)' : '8px solid transparent' }"
+                            :style="{ 'border-left': judge.onScreenSaver && judge.online ? '8px solid rgb(222, 226, 230)' : '8px solid transparent' }"
                         >
                             <div>
                                 <div style="margin-bottom: 8px;">
@@ -124,7 +124,7 @@
                                         <li class="py-1 fw-bold" style="font-size: 0.8rem; opacity: 0.8">
                                             <div class="d-flex justify-content-between align-items-center px-3">
                                                 <span>JUDGE #{{ judge.number }}</span>
-                                                <i class="fas fa-fw fa-remove" style="cur" onclick="event.stopPropagation();bootstrap.Dropdown.getOrCreateInstance(this.closest('.dropdown')).hide()"></i>
+                                                <i class="fas fa-fw fa-remove" style="cursor: pointer" onclick="event.stopPropagation();bootstrap.Dropdown.getOrCreateInstance(this.closest('.dropdown')).hide()"></i>
                                             </div>
                                         </li>
                                         <li v-if="judge.onScreenSaver">
@@ -345,20 +345,29 @@
             },
 
             /**
+             * @computed onlineVisibleItems
+             * @description Visible items that are online.
+             */
+            onlineVisibleItems() {
+                const items = [];
+                for (let i = 0; i < this.visible.items.length; i++) {
+                    if (this.processedJudges[this.visible.items[i]]) {
+                        if (this.processedJudges[this.visible.items[i]].online) {
+                            items.push(this.visible.items[i]);
+                        }
+                    }
+                }
+
+                return items;
+            },
+
+            /**
              * @computed hasOnlineJudge
              * @desription There's an online judge.
              * @returns {boolean}
              */
             hasOnlineJudge() {
-                let online = false;
-                for (const judgeKey in this.processedJudges) {
-                    online = this.processedJudges[judgeKey].online && this.processedJudges[judgeKey].visible;
-                    if (online) {
-                        break;
-                    }
-                }
-
-                return online;
+                return this.onlineVisibleItems.length > 0;
             }
         },
 
